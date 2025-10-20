@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ExpoCole 2025 · País de los Juegos</title>
+  <style>
+    :root {
+      --bg: #f5f8ff;
+      --tile-bg: #fff;
+      --tile-border: #e5e9f2;
+      --text: #1b2742;
+      --muted: #6b789e;
+      --brand: #1D125B;
+      --bg-brand: #68CBE2;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-y: auto;
+      /* ✅ scroll en el borde derecho */
+      overflow-x: hidden;
+    }
+
+    /* ===== Header ===== */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #fff;
+      border-bottom: 1px solid var(--tile-border);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1;
+      font-weight: 900;
+      color: var(--brand);
+      font-size: clamp(28px, 3.2vw, 35px);
+    }
+
+    .logo span {
+      background: var(--bg-brand);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 900;
+      font-size: clamp(28px, 2.8vw, 30px);
+    }
+
+    .img_logo {
+      width: clamp(56px, 7vw, 85px);
+      height: auto;
+      border-radius: 8px
+    }
+
+    /* ===== Main / Grid ===== */
+    main {
+      flex: 1;
+      overflow-y: auto;
+      /* scroll sólo aquí */
+      padding-bottom: 80px;
+      /* deja espacio para el footer fijo */
+      width: min(1400px, 96vw);
+      margin: 0 auto;
+    }
+
+    main {
+      scroll-behavior: smooth;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      margin: 10px;
+    }
+
+    /* breakpoints */
+    @media (min-width:480px) {
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      }
+    }
+
+    @media (min-width:768px) {
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+    }
+
+    @media (min-width:1024px) {
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      }
+    }
+
+    @media (min-width:1440px) {
+      .grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      }
+    }
+
+    .card {
+      position: relative;
+      background: var(--tile-bg);
+      border: 1px solid var(--tile-border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .12)
+    }
+
+    .card:focus-visible {
+      outline: 3px solid var(--bg-brand);
+      outline-offset: 3px
+    }
+
+    .thumb {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      overflow: hidden
+    }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block
+    }
+
+    .badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: var(--brand);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
+    .card h3 {
+      margin: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: clamp(13px, 1.6vw, 16px);
+      min-height: 1.4em;
+    }
+
+    .disabled {
+      filter: grayscale(1) brightness(.8);
+      cursor: not-allowed
+    }
+
+    .disabled::after {
+      content: "Próximamente";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .55);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: clamp(12px, 1.6vw, 14px);
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #fff;
+      border-top: 1px solid var(--tile-border);
+      color: var(--muted);
+      text-align: center;
+      font-weight: 700;
+      font-size: clamp(12px, 1.6vw, 14px);
+      padding: 12px 6px;
+      z-index: 90;
+      /* sube prioridad */
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+
+    /* ===== Modo TV (para proyector) ===== */
+    .tv .grid {
+      gap: 22px
+    }
+
+    .tv .card h3 {
+      font-size: clamp(16px, 2vw, 22px)
+    }
+
+    @media (min-width:768px) {
+      .tv .grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+    }
+
+    @media (min-width:1200px) {
+      .tv .grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      }
+    }
+
+    .tvBtn {
+      position: fixed;
+      right: 16px;
+      bottom: 72px;
+      /* ✅ arriba del footer */
+      z-index: 99;
+      background: #fff;
+      border: 1px solid var(--tile-border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, .12);
+      cursor: pointer;
+    }
+
+
+    /* Accesibilidad: reduce movimientos si el usuario lo prefiere */
+    @media (prefers-reduced-motion: reduce) {
+      .card {
+        transition: none
+      }
+
+      .card:hover {
+        transform: none
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo"><span>EXPO COLE</span>2025</div>
+    <img src="img/itlp.jpg" class="img_logo" alt="Logo colegio">
+  </header>
+
+  <main>
+    <div class="grid" id="grid" aria-live="polite"></div>
+  </main>
+
+  <footer>© 2025 · 7mo A — Hecho con HTML · CSS · JavaScript · APIs</footer>
+
+  <button id="tvBtn" class="tvBtn" type="button">🖥️ OFF</button>
+
+  <script>
+    const grid = document.getElementById("grid");
+    const tvBtn = document.getElementById("tvBtn");
+
+    /* Toggle Modo TV (tiles XL para proyector) */
+    tvBtn.addEventListener("click", () => {
+      document.body.classList.toggle("tv");
+      tvBtn.textContent = document.body.classList.contains("tv") ? "🖥️ ON" : "🖥️ OFF";
+    });
+
+    function render(list) {
+      grid.innerHTML = "";
+      list.forEach(g => {
+        const card = document.createElement("article");
+        card.className = "card" + (g.enabled === false ? " disabled" : "");
+        card.tabIndex = g.enabled === false ? -1 : 0;
+        card.title = `Grupo ${g.grupo}${g.integrantes ? " • " + g.integrantes.join(", ") : ""}`;
+        card.innerHTML = `
+      <div class="thumb">
+        <img loading="lazy" src="img/${g.img}" alt="${g.titulo || g.juego}">
+        <div class="badge">G${g.grupo}</div>
+      </div>
+      <h3>${g.titulo || g.juego}</h3>
+    `;
+        if (g.enabled !== false) {
+          const go = () => window.location.href = g.link || "#";
+          card.addEventListener("click", go);
+          card.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+        }
+        grid.appendChild(card);
+      });
+    }
+
+    async function loadData() {
+      let data = null;
+      try {
+        const res = await fetch("games.json", { cache: "no-store" });
+        if (res.ok) data = await res.json();
+      } catch (e) {
+        console.warn("No se pudo cargar games.json. Verifica que estés sirviendo por http(s).", e);
+      }
+      if (!Array.isArray(data)) data = []; // evita errores si falta el JSON
+      render(data);
+    }
+
+    loadData();
+  </script>
+</body>
+
+</html>

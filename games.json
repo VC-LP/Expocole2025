@@ -1,0 +1,174 @@
+[
+  {
+    "grupo": 10,
+    "integrantes": ["Nemi", "Figueredo", "Vasquez"],
+    "juego": "adivina_cancion",
+    "titulo": "🎵 Adivina la Canción",
+    "img": "cancion.png",
+    "link": "adivina_cancion.html",
+    "enabled": true
+  },
+  {
+    "grupo": 6,
+    "integrantes": ["Paillalef Agustina", "Coradini Santino"],
+    "juego": "pelicula",
+    "titulo": "🎬 Adivina la Película",
+    "img": "pelis.png",
+    "link": "poster_quiz.html",
+    "enabled": true
+  },
+  {
+    "grupo": 3,
+    "integrantes": ["Milagros Navarro", "Camila Araneda"],
+    "juego": "capitales",
+    "titulo": "🌍 Capitales del Mundo",
+    "img": "capitales.png",
+    "link": "capitales_fix.html",
+    "enabled": true
+  },
+  {
+    "grupo": 8,
+    "integrantes": ["Lujan Nahuelpan", "Lautaro Wilches", "Christian Cuyaman"],
+    "juego": "ahorcado",
+    "titulo": "🔠 Ahorcado",
+    "img": "ahorcado.png",
+    "link": "ahorcado_es_en.html",
+    "enabled": true
+  },
+  {
+    "grupo": 4,
+    "integrantes": ["Serena Busacca", "Sofia Diaz"],
+    "juego": "pokemon",
+    "titulo": "👾 Adivina el Pokémon",
+    "img": "poke.png",
+    "link": "pokemon_silueta.html",
+    "enabled": true
+  },
+  {
+    "grupo": 1,
+    "integrantes": ["Christiani Tobias", "Mateo Facundo", "Urraza Tobias", "Ramirez Mateo"],
+    "juego": "banderas",
+    "titulo": "🚩 Banderas del Mundo",
+    "img": "banderas.png",
+    "link": "banderas_quiz.html",
+    "enabled": true
+  },
+  {
+    "grupo": 12,
+    "integrantes": ["Martín Baigorrí", "Abigail Cuestas"],
+    "juego": "pelicula",
+    "titulo": "🎬 Adivina la Película",
+    "img": "pelis.png",
+    "link": "poster_quiz.html",
+    "enabled": true
+  },
+  {
+    "grupo": 11,
+    "integrantes": ["Navarro", "Curilem", "Caccharelli"],
+    "juego": "adivina_cancion",
+    "titulo": "🎵 Adivina la Canción",
+    "img": "cancion.png",
+    "link": "adivina_cancion.html",
+    "enabled": true
+  },
+  {
+    "grupo": 9,
+    "integrantes": ["Alexis Zarallo", "Jonhatan Reyes", "Jeremias Lujan"],
+    "juego": "capitales",
+    "titulo": "🌍 Capitales del Mundo",
+    "img": "capitales.png",
+    "link": "capitales_fix.html",
+    "enabled": true
+  },
+  {
+    "grupo": 2,
+    "integrantes": ["Martina Xamo", "Valentino Terny", "Kirian Grossi"],
+    "juego": "banderas",
+    "titulo": "🚩 Banderas del Mundo",
+    "img": "banderas.png",
+    "link": "banderas_quiz.html",
+    "enabled": true
+  },
+  {
+    "grupo": 5,
+    "integrantes": ["Candelaria Coria", "Irina Neilor"],
+    "juego": "pokemon",
+    "titulo": "👾 Adivina el Pokémon",
+    "img": "poke.png",
+    "link": "pokemon_silueta.html",
+    "enabled": true
+  },
+  {
+    "grupo": 7,
+    "integrantes": ["Montangie Alvaro", "Fischer Joaquin", "Tiecher Bruno"],
+    "juego": "ahorcado",
+    "titulo": "🔠 Ahorcado",
+    "img": "ahorcado.png",
+    "link": "ahorcado_es_en.html",
+    "enabled": true
+  },
+  {
+    "grupo": 13,
+    "integrantes": ["Equipo 13"],
+    "juego": "banderas",
+    "titulo": "🚩 Juego Próximo",
+    "img": "banderas.png",
+    "enabled": false
+  },
+  {
+    "grupo": 14,
+    "integrantes": ["Equipo 14"],
+    "juego": "capitales",
+    "titulo": "🌍 Juego Próximo",
+    "img": "capitales.png",
+    "enabled": false
+  },
+  {
+    "grupo": 15,
+    "integrantes": ["Equipo 15"],
+    "juego": "pokemon",
+    "titulo": "👾 En desarrollo",
+    "img": "poke.png",
+    "enabled": false
+  },
+  {
+    "grupo": 16,
+    "integrantes": ["Equipo 16"],
+    "juego": "pelicula",
+    "titulo": "🎬 En desarrollo",
+    "img": "pelis.png",
+    "enabled": false
+  },
+  {
+    "grupo": 17,
+    "integrantes": ["Equipo 17"],
+    "juego": "adivina_cancion",
+    "titulo": "🎵 En desarrollo",
+    "img": "cancion.png",
+    "enabled": false
+  },
+  {
+    "grupo": 18,
+    "integrantes": ["Equipo 18"],
+    "juego": "banderas",
+    "titulo": "🚩 Juego Próximo",
+    "img": "banderas.png",
+    "enabled": false
+  },
+  {
+    "grupo": 19,
+    "integrantes": ["Equipo 19"],
+    "juego": "capitales",
+    "titulo": "🌍 Juego Próximo",
+    "img": "capitales.png",
+    "enabled": false
+  },
+  {
+    "grupo": 20,
+    "integrantes": ["Equipo 20"],
+    "juego": "pokemon",
+    "titulo": "👾 En desarrollo",
+    "img": "poke.png",
+    "enabled": false
+  }
+]
