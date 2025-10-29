@@ -308,7 +308,7 @@
       <h3>${g.titulo || g.juego}</h3>
     `;
         if (g.enabled !== false) {
-          const go = () => window.location.href = g.link || "#";
+          const go = () => window.open(g.link || "#", "_blank");
           card.addEventListener("click", go);
           card.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
         }
