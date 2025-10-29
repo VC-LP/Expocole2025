@@ -48,7 +48,7 @@
     "grupo": 1,
     "integrantes": ["Christiani Tobias", "Mateo Facundo", "Urraza Tobias", "Ramirez Mateo"],
     "juego": "banderas",
-    "titulo": "🚩¿Qué bandera es?",
+    "titulo": "🚩Adivina la bandera🚩",
     "img": "banderas_g1.png",
     "link": "banderas_g1/banderas.html",
     "enabled": true
