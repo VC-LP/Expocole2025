@@ -49,7 +49,7 @@
     "integrantes": ["Christiani Tobias", "Mateo Facundo", "Urraza Tobias", "Ramirez Mateo"],
     "juego": "banderas_g1",
     "titulo": "🚩¿Qué país?",
-    "img": "banderas.png",
+    "img": "banderas_g1.png",
     "link": "banderas_g1/banderas.html",
     "enabled": true
   },
