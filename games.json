@@ -1,4 +1,4 @@
-[
+l[
   {
     "grupo": 10,
     "integrantes": ["Nemi", "Figueredo", "Vasquez"],
@@ -12,9 +12,9 @@
     "grupo": 6,
     "integrantes": ["Paillalef Agustina", "Coradini Santino"],
     "juego": "pelicula",
-    "titulo": "🎬 Adivina la Película",
-    "img": "pelis.png",
-    "link": "poster_quiz.html",
+    "titulo": "🎬 Adivina la Película de Terror",
+    "img": "img/peliculas_g6.png",
+    "link": "pelicula_g6/poster_quiz.html",
     "enabled": true
   },
   {
