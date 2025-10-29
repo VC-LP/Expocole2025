@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Banderas y países</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app" id="gameApp">
+  <h1 class="title">🚩 Banderas y países</h1>
+
+  <div class="row top-info">
+    <div class="pill scoreBox">Puntos: <b id="score">0</b></div>
+    <div class="pill">Ronda: <b id="round">1</b>/<b id="total">10</b></div>
+  </div>
+
+  <div class="question">¿A qué país pertenece esta bandera?</div>
+
+  <div class="flagBox" id="flagBox">
+    <img id="flag" class="flag" src="" alt="Bandera">
+  </div>
+
+  <div id="answers" class="ans"></div>
+
+  <div class="rowbottom-row">
+    <button id="next" class="next" disabled>Siguiente ⏭</button>
+  </div>
+
+  <!-- mensajes flotantes -->
+  <div id="feedback"></div>
+
+  <!-- mensaje final -->
+  <div id="finalMessage" class="hidden"></div>
+
+  <!-- botón reinicio -->
+  <button id="restart" class="restart hidden">🔁 Reiniciar juego</button>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+let ALL = [];
+let state = {score:0, round:1, total:10, current:null, locked:false};
+
+const mensajesCorrectos = [
+  "¡Excelente!", "¡Muy bien! 👏​", "¡Correcto!", "¡Perfecto! 😄​"
+];
+const mensajesIncorrectos = [
+  "¡Casi!", "No pasa nada 💪", "¡Uy! La próxima", " Incorrecto ☹️​"
+];
+
+async function loadCountries(){
+  const res = await fetch('https://restcountries.com/v3.1/all?fields=name,flags');
+  const data = await res.json();
+  ALL = data
+    .filter(c => c?.name?.common && (c.flags?.svg || c.flags?.png))
+    .map(c => ({ name: c.name.common, flag: c.flags.svg || c.flags.png }));
+}
+
+function pick(arr, n=1){
+  const a=[...arr]; const out=[];
+  while(out.length<n && a.length){ out.push(a.splice(Math.floor(Math.random()*a.length),1)[0]); }
+  return out;
+}
+
+function renderOptions(correctName, pool){
+  const names = pool.map(x=>x.name);
+  if(!names.includes(correctName)) names.splice(Math.floor(Math.random()*names.length), 0, correctName);
+  const opts = [...new Set(names)].slice(0,4).sort(()=>Math.random()-0.5);
+  const box = $('#answers'); box.innerHTML = '';
+  opts.forEach(name=>{
+    const btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.textContent = name;
+    btn.onclick = ()=> choose(name);
+    box.appendChild(btn);
+  });
+}
+
+function showFeedback(msg, correct){
+  const feedback = $('#feedback');
+  feedback.textContent = msg;
+  feedback.className = correct ? 'correctMsg show' : 'wrongMsg show';
+  setTimeout(()=>feedback.classList.remove('show'),1300);
+}
+
+function lock(selected){
+  state.locked = true;
+  const correct = state.current.correct;
+  $$('#answers .btn').forEach(b=>{
+    if(b.textContent === correct) b.classList.add('correct');
+    if(selected && b.textContent === selected && selected !== correct) b.classList.add('wrong');
+    b.disabled = true;
+  });
+  $('#next').disabled = false;
+}
+
+function animateScore(){
+  const scoreBox = $('.scoreBox');
+  scoreBox.classList.add('pop');
+  setTimeout(()=>scoreBox.classList.remove('pop'),500);
+}
+
+function choose(name){
+  if(state.locked) return;
+  if(name === state.current.correct){
+    state.score++;
+    $('#score').textContent = state.score;
+    animateScore();
+    showFeedback(mensajesCorrectos[Math.floor(Math.random()*mensajesCorrectos.length)], true);
+  } else {
+    showFeedback(mensajesIncorrectos[Math.floor(Math.random()*mensajesIncorrectos.length)], false);
+  }
+  lock(name);
+}
+
+async function nextRound(){
+  $('#next').disabled = true;
+  state.locked = false;
+  $('#finalMessage').classList.add('hidden');
+  $('#flagBox').style.display = 'flex';
+  $('#answers').style.display = 'grid';
+  $('#next').style.display = 'inline-block';
+
+  if(state.round > state.total){
+    const finalMsg = $('#finalMessage');
+    const porcentaje = Math.round((state.score / state.total) * 100);
+    let textoFinal = "";
+    if (porcentaje >= 80) textoFinal = "🎉 ¡Excelente trabajo!";
+    else if (porcentaje >= 50) textoFinal = "👏 ¡Buen intento!";
+    else textoFinal = "💪 ¡No te rindas!";
+
+    finalMsg.textContent = `${textoFinal} (${state.score}/${state.total})`;
+    finalMsg.classList.remove('hidden');
+    finalMsg.classList.add('show');
+
+    // Ocultar elementos de la ronda
+    $('#flagBox').style.display = 'none';
+    $('#answers').style.display = 'none';
+    $('#next').style.display = 'none';
+
+    $('#restart').classList.remove('hidden');
+    return;
+  }
+
+  const sample = pick(ALL, 4);
+  if(sample.length < 4){ return; }
+  const [correct, ...others] = sample;
+  state.current = { correct: correct.name };
+  $('#flag').src = correct.flag;
+  renderOptions(correct.name, others);
+  $('#round').textContent = state.round;
+}
+
+$('#next').addEventListener('click', ()=>{
+  state.round++;
+  nextRound();
+});
+
+$('#restart').addEventListener('click', ()=>{
+  state = {score:0, round:1, total:10, current:null, locked:false};
+  $('#score').textContent = 0;
+  $('#restart').classList.add('hidden');
+  $('#finalMessage').classList.add('hidden');
+  $('#flagBox').style.display = 'flex';
+  $('#answers').style.display = 'grid';
+  $('#next').style.display = 'inline-block';
+  $('.title').classList.add('zoomIn');
+  setTimeout(()=>$('.title').classList.remove('zoomIn'), 1000);
+  nextRound();
+});
+
+(async function init(){
+  await loadCountries();
+  nextRound();
+})();
+</script>
+</body>
+</html>
