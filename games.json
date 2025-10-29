@@ -47,10 +47,10 @@
   {
     "grupo": 1,
     "integrantes": ["Christiani Tobias", "Mateo Facundo", "Urraza Tobias", "Ramirez Mateo"],
-    "juego": "banderas",
-    "titulo": "🚩 Banderas del Mundo",
+    "juego": "banderas_g1",
+    "titulo": "🚩¿Qué país?",
     "img": "banderas.png",
-    "link": "banderas_quiz.html",
+    "link": "banderas_g1/banderas.html",
     "enabled": true
   },
   {
