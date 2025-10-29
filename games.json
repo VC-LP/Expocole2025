@@ -12,7 +12,7 @@
     "grupo": 6,
     "integrantes": ["Paillalef Agustina", "Coradini Santino"],
     "juego": "pelicula",
-    "titulo": "🎬 Adivina la Película de Terror",
+    "titulo": "🎬 Pelis de Terror",
     "img": "peliculas_g6.png",
     "link": "pelicula_g6/poster_quiz.html",
     "enabled": true
