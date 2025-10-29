@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿De qué película/serie es este póster?</title>
+<link rel="stylesheet" href="./style.css">
+<link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+  <h1>🎬 ¿De qué película/serie es este póster?</h1>
+
+  <div class="row">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <div class="pill">Puntos totales: <b id="score">0</b></div>
+      <div class="pill">Valor ronda: <b id="roundValue">5</b> pts</div>
+    </div>
+    <div class="pill">Ronda: <b id="round">1</b>/<b id="total">10</b></div>
+  </div>
+
+  <div class="question">Arranca con área chica y difusa. Cada <b>Ayuda</b> revela +15% y baja 1 punto el valor de la ronda.</div>
+
+  <div class="stage">
+    <div class="imgBox">
+      <img id="posterBase" class="posterBase" src="" alt="Póster a color">
+      <img id="posterCover" class="posterCover" src="" alt="Póster cubierto">
+    </div>
+    <button id="hint" class="btnSm" style="margin-top:10px;">🕵️ Ayuda (–1 punto)</button>
+  </div>
+
+  <div id="answers" class="ans"></div>
+
+  <div class="controls">
+    <span id="status" class="muted">Listo</span>
+    <button id="next" class="btnSm" disabled>Siguiente ⏭</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
