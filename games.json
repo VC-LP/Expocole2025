@@ -76,8 +76,8 @@
     "integrantes": ["Alexis Zarallo", "Jonhatan Reyes", "Jeremias Lujan"],
     "juego": "capitales",
     "titulo": "🌍 Capitales del Mundo",
-    "img": "capitales.png",
-    "link": "capitales_fix.html",
+    "img": "capitales_g9/portada_g9.png",
+    "link": "capitales_g9/index.html",
     "enabled": false
   },
   {
