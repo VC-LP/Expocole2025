@@ -67,9 +67,9 @@
     "integrantes": ["Navarro", "Curilem", "Caccharelli"],
     "juego": "adivina_cancion",
     "titulo": "🎵 Adivina la Canción",
-    "img": "cancion.png",
-    "link": "adivina_cancion.html",
-    "enabled": false
+    "img": "cancion_g11.png",
+    "link": "cancion_g11/index.html",
+    "enabled": true
   },
   {
     "grupo": 9,
