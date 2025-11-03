@@ -78,7 +78,7 @@
     "titulo": "🌍 Capitales del Mundo",
     "img": "capitales_g9/portada_g9.png",
     "link": "capitales_g9/index.html",
-    "enabled": false
+    "enabled": true
   },
   {
     "grupo": 2,
