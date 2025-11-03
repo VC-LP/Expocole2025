@@ -96,7 +96,7 @@
     "titulo": "¿Quién es ese Pokémon?",
     "img": "pokemon_g5.png",
     "link": "pokemon_g5/pokemon.html",
-    "enabled": false
+    "enabled": true
   },
   {
     "grupo": 7,
