@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
+<title>Adivina la canción</title>
+</head>
+<body>
+<div class="app">
+  <h1>🎵 Adivina la canción</h1>
+  <div class="row">
+    <div class="pill">Puntos: <b id="score">0</b></div>
+    <div class="pill">Ronda: <b id="round">1</b>/<b id="total">10</b></div>
+  </div>
+
+  <div class="question">Escucha el fragmento y elige el título correcto</div>
+
+  <div class="audioBox">
+    <img id="cover" class="cover" src="" alt="cover">
+    <audio id="player" controls preload="none"></audio>
+  </div>
+
+  <div id="answers" class="ans"></div>
+
+  <div class="row">
+    <span class="muted" id="status">Listo</span>
+    <button id="next" class="next" disabled>Siguiente ⏭</button>
+  </div>
+</div>
+
+<div id="finalScreen" style="display:none;">
+  <div style="background: rgba(0,0,0,0.85); color: #fff; padding: 2rem 3rem; border-radius: 20px; text-align: center; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
+    <h2>¡Felicidades!</h2>
+    <p>Obtuviste <b id="finalScore">0</b> puntos</p>
+    <button id="retryBtn" style="background:#ff8c00;color:#fff;border:none;padding:0.8rem 1.5rem;border-radius:15px;font-size:1rem;cursor:pointer;">Volver a jugar</button>
+  </div>
+</div>
+
+  <footer class="credits">
+  Desarrollado por <b>Navarro, Curilem y Caccharelli</b> – Proyecto Expo Cole 2025 
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

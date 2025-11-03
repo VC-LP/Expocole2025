@@ -1,0 +1,215 @@
+:root{
+  --bg1:#ff9a9e;
+  --bg2:#fad0c4;
+  --accent:#8b5cf6;
+  --ok:#22c55e;
+  --bad:#ef4444;
+  --text:#1e1e2f;
+  --white:#ffffff;
+  --panel:#ffffffb5;
+}
+*{box-sizing:border-box;transition:all .25s ease}
+html,body{height:100%}
+body {
+  margin: 0;
+  height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background: linear-gradient(270deg, #ff9a9e, #fad0c4, #a18cd1, #fbc2eb, #40e0d0, #4b0082);
+  background-size: 1200% 1200%;
+
+  animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+  0% {background-position: 0% 50%;}
+  25% {background-position: 50% 50%;}
+  50% {background-position: 100% 50%;}
+  75% {background-position: 50% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
+
+.app{
+  width:min(900px,94vw);
+  background: rgba(255,255,255,0.2);
+  border-radius:20px;
+  padding:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+  backdrop-filter:blur(10px);
+}
+
+h1{
+  margin:0 0 10px 0;
+  font-size:28px;
+  text-align:center;
+  background:linear-gradient(90deg,#f97316,#8b5cf6,#06b6d4);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.question{
+  text-align:center;
+  font-size:20px;
+  font-weight:600;
+  margin:14px 0;
+}
+
+.audioBox{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#fff;
+  border-radius:14px;
+  padding:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
+  position:relative;
+  overflow:hidden;
+}
+
+.cover{
+  width:70px;height:70px;border-radius:10px;
+  object-fit:cover;
+  border:2px solid var(--accent);
+}
+
+.ans{display:grid;gap:12px;margin:18px 0;}
+
+.btn{
+  width:100%;
+  padding:14px 16px;
+  border-radius:12px;
+  background:#ffffff;
+  border:2px solid transparent;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+}
+.btn:hover{transform:translateY(-3px) scale(1.02);
+  background:#f0e9ff;
+  box-shadow:0 6px 14px rgba(0,0,0,.15);}
+.btn.correct{background:#ecfdf5;border-color:var(--ok);color:var(--ok);}
+.btn.wrong{background:#fef2f2;border-color:var(--bad);color:var(--bad);}
+
+.row{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+}
+.pill{
+  padding:6px 10px;
+  border-radius:999px;
+  background:purple;
+  font-weight:600;
+  box-shadow:0 2px 6px rgba(0,0,0,.1);
+}
+.next{
+  padding:10px 16px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#8b5cf6,#06b6d4);
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,0,0,.2);
+}
+.next:hover:not(:disabled){transform:scale(1.05);}
+.next:disabled{opacity:.5;cursor:not-allowed;}
+
+.muted{color:#555;font-size:14px}
+
+/* Pantalla final */
+.final{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  animation:fadeIn .6s forwards;
+}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.hidden{display:none;}
+.final-content{
+  background:#fff;
+  padding:30px;
+  border-radius:16px;
+  text-align:center;
+  box-shadow:0 8px 30px rgba(0,0,0,.3);
+  animation:pop .6s ease;
+}
+@keyframes pop{0%{transform:scale(0.6);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.final-content h2{
+  font-size:26px;
+  margin-bottom:12px;
+  background:linear-gradient(90deg,#f97316,#8b5cf6,#06b6d4);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.retry{
+  padding:10px 18px;
+  background:linear-gradient(90deg,#06b6d4,#8b5cf6);
+  border:none;
+  color:#fff;
+  font-weight:700;
+  border-radius:10px;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+.retry:hover{transform:scale(1.1);}
+
+.final {
+  position: fixed; /* encima de todo */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 2rem 3rem;
+  border-radius: 20px;
+  text-align: center;
+  z-index: 1000;
+  box-shadow: 0 0 20px rgba(0,0,0,0.7);
+  animation: fadeIn 0.5s ease;
+}
+
+.final h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.final p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.final button.retry {
+  background: #ff8c00;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 15px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.final button.retry:hover {
+  background: #ff5722;
+  transform: scale(1.05);
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translate(-50%, -60%);}
+  to {opacity: 1; transform: translate(-50%, -50%);}
+}
+
+
