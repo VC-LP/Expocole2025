@@ -22,9 +22,9 @@
     "integrantes": ["Milagros Navarro", "Camila Araneda"],
     "juego": "capitales",
     "titulo": "🌍 Capitales del Mundo",
-    "img": "capitales.png",
-    "link": "capitales_fix.html",
-    "enabled": false
+    "img": "capitales_g3.png",
+    "link": "capitales_g3/index.html",
+    "enabled": true
   },
   {
     "grupo": 8,
