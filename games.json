@@ -75,7 +75,7 @@
     "grupo": 9,
     "integrantes": ["Alexis Zarallo", "Jonhatan Reyes", "Jeremias Lujan"],
     "juego": "capitales",
-    "titulo": "🌍 Capitales del Mundo",
+    "titulo": "🌍 Adivina la capital",
     "img": "portada_g9.png",
     "link": "capitales_g9/index.html",
     "enabled": true
