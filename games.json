@@ -93,9 +93,9 @@
     "grupo": 5,
     "integrantes": ["Candelaria Coria", "Irina Neilor"],
     "juego": "pokemon",
-    "titulo": "👾 Adivina el Pokémon",
-    "img": "poke.png",
-    "link": "pokemon_silueta.html",
+    "titulo": "¿Quién es ese Pokémon?",
+    "img": "pokemon_g5.png",
+    "link": "pokemon_g5/pokemon.html",
     "enabled": false
   },
   {
