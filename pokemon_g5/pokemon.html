@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>¿Quién es ese Pokémon?</title>
+
+  <!-- Icono -->
+  <link rel="icon" href="Imagenes/impokball(1).png">
+
+  <!-- Fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jersey+10&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="app">
+    <img src="Imagenes/-Qui-n-es-ese-Pok-mon-11-3-2025.png" alt="Pokemon" srcset="">
+
+    <div class="row">
+      <div class="pill">Puntos: <b id="score">0</b></div>
+      <div class="pill">Ronda: <b id="round">1</b>/<b id="total">10</b></div>
+    </div>
+
+    <div class="stage">
+  <div class="imgBox">
+    <img id="pokeBase" class="pokeBase" src="" alt="Pokémon a color">
+    <img id="pokeMask" class="pokeMask" src="" alt="Silueta negra">
+
+    <!-- Botón ayuda pegado a la imagen -->
+    <button id="hint" class="btnAm helpBtn">Ayuda</button>
+
+    <!-- Info extra (tipos, #) debajo de la imagen -->
+    <div id="extra" class="extra"></div>
+  </div>
+
+  <!-- Respuestas a la derecha (o abajo en mobile) -->
+  <div id="answers" class="ans"></div>
+</div>
+
+<!-- Segunda fila: estado + Siguiente -->
+<div class="controls">
+  <span id="status" class="muted"></span>
+  <button id="next" class="btnSm" disabled>Siguiente</button>
+</div>
+
+
+    <div id="ranking"></div>
+  </div>
+
+  <script src="Javasc.js"></script>
+</body>
+</html>
