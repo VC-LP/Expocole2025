@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>🌍 Adivina la Capital</title>
+
+  <!-- Vinculación del archivo de estilos -->
+  <link rel="stylesheet" href="CSS/style.css">
+</head>
+
+<body>
+  <div class="app">
+    <h1>🌍 Adivina la Capital</h1>
+
+    <!-- Pantalla de inicio -->
+    <div id="start-screen">
+      <p>Demostrá tus conocimientos de geografía 🌎</p>
+      <button id="start-btn" class="next">Comenzar ▶️</button>
+    </div>
+
+    <!-- Contenido principal del juego -->
+    <div id="game" style="display:none;">
+      <div class="row">
+        <div class="pill">Puntos: <b id="score">0</b></div>
+        <div class="pill">Ronda: <b id="round">1</b>/<b id="total">10</b></div>
+      </div>
+
+      <div class="question" id="qtext">¿Cuál es la capital de…?</div>
+      <div id="answers" class="ans"></div>
+
+      <div class="row">
+        <span id="status" class="muted">Cargando países…</span>
+        <button id="next" class="next" disabled>Siguiente ⏭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🧠 Script principal -->
+  <script>
+    // 🔹 Accesos rápidos al DOM
+    const $ = s => document.querySelector(s);
+    const $$ = s => Array.from(document.querySelectorAll(s));
+
+    // 🔹 Normaliza texto (sin acentos, minúsculas)
+    const norm = s => (s || "")
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .trim().toLowerCase();
+
+    // 🔹 Variables globales
+    let ALL = [];
+    let state = { score: 0, round: 1, total: 10, current: null, locked: false };
+
+    // 🔹 Función auxiliar para elegir elementos aleatorios
+    function pick(arr, n) {
+      const copy = [...arr], result = [];
+      while (result.length < n && copy.length)
+        result.push(copy.splice(Math.floor(Math.random() * copy.length), 1)[0]);
+      return result;
+    }
+
+    // 🔹 Carga la lista de países desde la API
+    async function loadCountries() {
+      const res = await fetch("https://restcountries.com/v3.1/all?fields=name,capital,flags");
+      const data = await res.json();
+      ALL = data
+        .filter(c => c?.name?.common && Array.isArray(c.capital) && c.capital[0])
+        .map(c => ({
+          name: c.name.common,
+          cap: c.capital[0],
+          capN: norm(c.capital[0]),
+          flag: c.flags?.svg || c.flags?.png || ""
+        }));
+      $("#status").textContent = `Listo (${ALL.length} países cargados)`;
+    }
+
+    // 🔹 Muestra una nueva pregunta
+    function renderQuestion() {
+      const sample = pick(ALL, 8);
+      const correct = sample[0];
+      const others = sample.filter(x => x.capN !== correct.capN).slice(0, 3);
+
+      state.current = { country: correct.name, capital: correct.cap, capitalN: correct.capN };
+
+      $("#qtext").innerHTML =
+        `<img src="${correct.flag}" class="flag"> ¿Cuál es la capital de <b>${correct.name}</b>?`;
+
+      const options = [correct, ...others].map(o => o.cap);
+      const shuffled = [...new Set(options)].sort(() => Math.random() - 0.5).slice(0, 4);
+
+      const box = $("#answers");
+      box.innerHTML = "";
+      shuffled.forEach(txt => {
+        const b = document.createElement("button");
+        b.className = "btn";
+        b.textContent = txt;
+        b.onclick = () => choose(txt);
+        box.appendChild(b);
+      });
+
+      $("#next").disabled = true;
+      state.locked = false;
+    }
+
+    // 🔹 Bloquea los botones y muestra correctas/incorrectas
+    function lock(selTxt) {
+      state.locked = true;
+      const correctN = state.current.capitalN;
+      $$("#answers .btn").forEach(b => {
+        const n = norm(b.textContent);
+        if (n === correctN) b.classList.add("correct");
+        if (selTxt && n === norm(selTxt) && n !== correctN) b.classList.add("wrong");
+        b.disabled = true;
+      });
+      $("#next").disabled = false;
+    }
+
+    // 🔹 Cuando el jugador elige una respuesta
+    function choose(txt) {
+      if (state.locked) return;
+      if (norm(txt) === state.current.capitalN) {
+        state.score++;
+        $("#score").textContent = state.score;
+      }
+      lock(txt);
+    }
+
+    // 🔹 Pasar a la siguiente ronda o finalizar
+    $("#next").addEventListener("click", () => {
+      state.round++;
+      if (state.round <= state.total) {
+        $("#round").textContent = state.round;
+        renderQuestion();
+      } else {
+        $("#status").textContent = `🎯 Finalizado: ${state.score}/${state.total} puntos`;
+        $("#answers").innerHTML = "";
+        $("#next").disabled = true;
+
+        // 🆕 Botón para reiniciar
+        const restart = document.createElement("button");
+        restart.textContent = "🔁 Reiniciar juego";
+        restart.className = "next";
+        restart.style.marginTop = "12px";
+        restart.onclick = () => {
+          state = { score: 0, round: 1, total: 10, current: null, locked: false };
+          $("#score").textContent = "0";
+          $("#status").textContent = "Nueva partida iniciada…";
+          $("#round").textContent = "1";
+          renderQuestion();
+          $("#next").disabled = false;
+          restart.remove();
+        };
+        document.querySelector(".app").appendChild(restart);
+      }
+    });
+
+    // 🚀 Comienza el juego desde la pantalla inicial
+    $("#start-btn").addEventListener("click", async () => {
+      $("#start-screen").style.display = "none";
+      $("#game").style.display = "block";
+      await loadCountries();
+      renderQuestion();
+    });
+  </script>
+</body>
+</html>
