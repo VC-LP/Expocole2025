@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ahorcado </title>
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app" id="appRoot" aria-live="polite">
+    <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+
+    <!-- Header -->
+    <header>
+      <h1>Ahorcado</h1>
+      <!--<div class="subtitle">Degradado pastel celeste–menta • responsive</div>-->
+    </header>
+
+    <!-- Start overlay (menu) -->
+    <div id="startOverlay" class="overlay" role="dialog" aria-modal="true">
+      <div class="menuCard" role="region" aria-label="Pantalla de configuración">
+        <div class="menuCol">
+          <label for="cfgLang">Idioma</label>
+          <select id="cfgLang" class="select" aria-label="Idioma">
+            <option value="es" selected>Español</option>
+            <option value="en">English</option>
+          </select>
+          <div class="hintSmall">Seleccioná el idioma de las palabras.</div>
+        </div>
+        <div class="menuCol">
+          <label for="cfgDifficulty">Dificultad (longitud de palabra)</label>
+          <select id="cfgDifficulty" class="select" aria-label="Dificultad">
+            <option value="1">1 — palabras cortas (fácil)</option>
+            <option value="2" selected>2 — palabras medianas (intermedio)</option>
+            <option value="3">3 — palabras largas (difícil)</option>
+          </select>
+          <div class="hintSmall">La dificultad determina la longitud de la palabra. El juego termina cuando el muñeco está completo.</div>
+        </div>
+        <div class="menuCol">
+          <label for="cfgConfetti">Confetti</label>
+          <select id="cfgConfetti" class="select" aria-label="Confetti">
+            <option value="on" selected>On</option>
+            <option value="off">Off</option>
+          </select>
+          <div class="hintSmall">Mostrar confetti al ganar.</div>
+        </div>
+        <div class="menuCol">
+          <label for="cfgTheme">Temática</label>
+          <select id="cfgTheme" class="select" aria-label="Temática">
+            <option value="general" selected>General</option>
+            <option value="animales">Animales</option>
+            <option value="comidas">Comidas</option>
+            <option value="tecnologia">Tecnología</option>
+            <option value="paises">Países</option>
+          </select>
+          <div class="hintSmall">Filtrar palabras por temática.</div>
+        </div>
+        <div style="width:100%;display:flex;justify-content:flex-end;margin-top:8px;">
+          <button id="btnStart" class="btnPrimary" aria-label="Jugar">🎮 Jugar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Walker -->
+    <div class="walker" id="walker" aria-hidden="true">
+      <svg viewBox="0 0 64 64" id="walkerSVG" aria-hidden="true">
+        <g stroke="#082033" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <circle cx="32" cy="12" r="6" fill="#fff" />
+          <path id="w-body" d="M32 18 L32 34" />
+          <path id="w-leg1" d="M32 34 L26 46" />
+          <path id="w-leg2" d="M32 34 L38 46" />
+          <path id="w-arm1" d="M32 22 L24 28" />
+          <path id="w-arm2" d="M32 22 L40 26" />
+        </g>
+      </svg>
+    </div>
+
+    <!-- Main game area -->
+    <main class="layout" id="mainLayout">
+      <section class="gameCard" id="gameCard" role="main" aria-label="Tablero del juego">
+        <div class="streakBubble" id="streakBubble" aria-hidden="false">0</div>
+        <div class="hangWrap" id="hangWrap" aria-hidden="true">
+          <svg class="hang" viewBox="0 0 200 220" id="hangSVG" aria-hidden="true">
+            <g id="g-base" stroke="rgba(8,20,32,0.12)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+              <path id="base-1" d="M20 200 H120" />
+              <path id="base-2" d="M60 200 V30" />
+              <path id="base-3" d="M60 30 H140" />
+              <path id="base-4" d="M140 30 V58" />
+            </g>
+            <g id="g-parts" stroke="rgba(40,90,110,0.96)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
+              <circle id="part-head" class="part-elastic" cx="140" cy="78" r="16" />
+              <path id="part-body" class="part-elastic" d="M140 94 V140" />
+              <path id="part-larm" class="part-elastic" d="M140 110 L118 100" />
+              <path id="part-rarm" class="part-elastic" d="M140 110 L162 100" />
+              <path id="part-lleg" class="part-elastic" d="M140 140 L120 170" />
+              <path id="part-rleg" class="part-elastic" d="M140 140 L160 170" />
+            </g>
+          </svg>
+        </div>
+
+        <div id="word" class="word" aria-live="polite" role="status">_ _ _ _</div>
+        <div id="hint" class="hint">Elegí letras con el teclado o tocá las teclas.</div>
+        <div id="letters" class="letters" role="application" aria-label="Teclado de letras"></div>
+        <div class="statusRow" id="statusRow">
+          <div id="status" class="status">Listo</div>
+        </div>
+        <div class="bottomLeft">
+          <button id="exitMenu" class="btnSmall">Salir al menu</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div style="text-align:center;color:var(--muted);font-size:13px">
+        Expocole 2025 — PDISC 7°A
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
