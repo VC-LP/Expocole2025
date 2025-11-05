@@ -30,10 +30,11 @@
     "grupo": 8,
     "integrantes": ["Lujan Nahuelpan", "Lautaro Wilches", "Christian Cuyaman"],
     "juego": "ahorcado",
-    "titulo": "🔠 Ahorcado",
-    "img": "ahorcado.png",
-    "link": "ahorcado_es_en.html",
-    "enabled": false
+    "titulo": "Ahorcado",
+    "img": "ahorcado_g8
+    .png",
+    "link": "ahorcado_g8/ahorcado.html",
+    "enabled": true
   },
   {
     "grupo": 4,
