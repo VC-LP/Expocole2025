@@ -31,8 +31,7 @@
     "integrantes": ["Lujan Nahuelpan", "Lautaro Wilches", "Christian Cuyaman"],
     "juego": "ahorcado",
     "titulo": "Ahorcado",
-    "img": "ahorcado_g8
-    .png",
+    "img": "ahorcado_g8.png",
     "link": "ahorcado_g8/ahorcado.html",
     "enabled": true
   },
