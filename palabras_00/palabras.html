@@ -179,7 +179,6 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    max-width:98%;
   }
   
   .word {
@@ -557,4 +556,47 @@ async function newWord(){
   }else{
     tries = 6;
     const pick = PALABRAS_ES[Math.floor(Math.random()*PALABRAS_ES.length)];
-    secretRaw = onlyL
+    secretRaw = onlyLetters(pick);
+    if(!secretRaw || secretRaw.length<3) secretRaw = "escuela";
+  }
+  secretNorm = stripAccents(secretRaw).toLowerCase();
+  display = secretRaw.split('').map(ch => /[a-záéíóúüñ]/i.test(ch) ? '_' : ch);
+  draw();
+  setStatus(lang==='es'?'Listo para jugar':'Ready to play');
+}
+
+/* ===== Eventos ===== */
+$('#next').addEventListener('click', newWord);
+$('#lang').addEventListener('change', e=>{
+  lang = e.target.value;
+  buildLetters();
+  newWord();
+  $('#hint').textContent = lang==='es'
+    ? 'Elegí letras con el teclado o tocá los botones.'
+    : 'Pick letters with your keyboard or tap the buttons.';
+});
+$('#enLen').addEventListener('change', ()=>{
+  if(lang==='en') newWord();
+});
+
+window.addEventListener('keydown', e=>{
+  if(ended) return;
+  let k = e.key.toUpperCase();
+  if(/[A-ZÑ]/.test(k)){
+    const normalizedKey = (k==='Ñ'?'N':k).toLowerCase();
+    const btn = [...$$('#letters .btnL')].find(b=> (b.textContent==='Ñ' && k==='Ñ') || b.textContent===k );
+    if(btn && !btn.disabled) guess(normalizedKey, btn);
+  }
+});
+
+/* ===== Init ===== */
+function init(){
+  lang='es';
+  $('#lang').value='es';
+  buildLetters();
+  newWord();
+}
+init();
+</script>
+</body>
+</html>
