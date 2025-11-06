@@ -39,10 +39,10 @@
     "grupo": 4,
     "integrantes": ["Serena Busacca", "Sofia Diaz"],
     "juego": "pokemon",
-    "titulo": "👾 Adivina el Pokémon",
-    "img": "poke.png",
-    "link": "pokemon_silueta.html",
-    "enabled": false
+    "titulo": "¿¿Qué Pokémon se esconde en la silueta??",
+    "img": "pokemon_g4.png",
+    "link": "pokemon_g4/index.html",
+    "enabled": true
   },
   {
     "grupo": 1,
