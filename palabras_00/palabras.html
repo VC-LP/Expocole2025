@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ahorcado - Adivina la Palabra</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  
+  html, body {
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  body {
+    background: linear-gradient(135deg, #0077be 0%, #00a8e8 25%, #00d4ff 50%, #4dd0e1 75%, #80deea 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  /* Burbujas flotantes de fondo */
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    animation: float 20s infinite ease-in-out;
+    pointer-events: none;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    25% { transform: translateY(-100px) translateX(50px); }
+    50% { transform: translateY(-200px) translateX(-30px); }
+    75% { transform: translateY(-100px) translateX(70px); }
+  }
+  
+  .game-title {
+    font-size: 56px;
+    font-weight: 900;
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 4px 4px 0px rgba(0, 100, 200, 0.4),
+                 -2px -2px 0px rgba(255, 255, 255, 0.6);
+    animation: bounce 2s ease-in-out infinite;
+    z-index: 10;
+  }
+  
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .app {
+    width: min(1400px, 95vw);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 30px;
+    padding: 25px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.6s ease-out;
+    z-index: 10;
+  }
+  
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .stats-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  
+  .pill {
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 16px;
+    background: linear-gradient(135deg, #0288d1 0%, #0277bd 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(2, 136, 209, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .pill b {
+    font-size: 18px;
+  }
+  
+  .select {
+    padding: 6px 12px;
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .next-btn {
+    padding: 12px 24px;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+    transition: all 0.3s ease;
+  }
+  
+  .next-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(79, 172, 254, 0.6);
+  }
+  
+  .game-area {
+    display: grid;
+    grid-template-columns: 38% 62%;
+    gap: 30px;
+    margin-top: 20px;
+  }
+  
+  .hangman-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e0f7ff 0%, #b3e5fc 100%);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .face {
+    font-size: 120px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  
+  .tries-display {
+    margin-top: 15px;
+    font-size: 24px;
+    font-weight: 800;
+    color: #0277bd;
+  }
+  
+  .word-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width:98%;
+  }
+  
+  .word {
+    letter-spacing: 0.3em;
+    font-size: 56px;
+    font-weight: 900;
+    text-align: center;
+    color: #0277bd;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+    border-radius: 20px;
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .hint {
+    color: #0277bd;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  
+  .letters {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 8px;
+  }
+  
+  .btnL {
+    padding: 16px 0;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%);
+    color: white;
+    font-weight: 800;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+  }
+  
+  .btnL:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0, 188, 212, 0.5);
+  }
+  
+  .btnL:active:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  
+  .btnL:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    color: #0277bd;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  
+  .win {
+    color: #00c853;
+    font-weight: 800;
+    font-size: 20px;
+  }
+  
+  .lose {
+    color: #d32f2f;
+    font-weight: 800;
+    font-size: 20px;
+  }
+  
+  /* Confetti */
+  .confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: #f0f;
+    position: absolute;
+    animation: confetti-fall 3s linear forwards;
+    z-index: 1000;
+  }
+  
+  @keyframes confetti-fall {
+    to {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .game-area {
+      grid-template-columns: 1fr;
+    }
+    
+    .word {
+      font-size: 40px;
+    }
+    
+    .letters {
+      grid-template-columns: repeat(7, 1fr);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Burbujas de fondo -->
+<div class="bubble" style="width: 80px; height: 80px; left: 10%; top: 20%; animation-delay: 0s;"></div>
+<div class="bubble" style="width: 60px; height: 60px; left: 80%; top: 30%; animation-delay: 2s;"></div>
+<div class="bubble" style="width: 100px; height: 100px; left: 50%; top: 60%; animation-delay: 4s;"></div>
+<div class="bubble" style="width: 70px; height: 70px; left: 20%; top: 70%; animation-delay: 1s;"></div>
+<div class="bubble" style="width: 90px; height: 90px; left: 70%; top: 80%; animation-delay: 3s;"></div>
+<div class="bubble" style="width: 50px; height: 50px; left: 40%; top: 15%; animation-delay: 5s;"></div>
+<div class="bubble" style="width: 75px; height: 75px; left: 85%; top: 65%; animation-delay: 3.5s;"></div>
+<div class="bubble" style="width: 65px; height: 65px; left: 15%; top: 50%; animation-delay: 1.5s;"></div>
+
+<div class="game-title">🪢 ¡Adivina la palabra!</div>
+
+<div class="app">
+  <div class="stats-row">
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <span class="pill">
+        🌍 Idioma:
+        <select id="lang" class="select">
+          <option value="es">Español</option>
+          <option value="en">English</option>
+        </select>
+      </span>
+      <span class="pill">
+        📏 Longitud EN:
+        <select id="enLen" class="select">
+          <option value="4">4</option>
+          <option value="5" selected>5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+        </select>
+      </span>
+    </div>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <span class="pill">⭐ Puntos: <b id="score">0</b></span>
+      <button id="next" class="next-btn">Nueva palabra ⏭</button>
+    </div>
+  </div>
+
+  <div class="game-area">
+    <div class="hangman-section">
+      <div id="face" class="face">🙂</div>
+      <div class="tries-display">Intentos: <span id="tries">6</span></div>
+    </div>
+
+    <div class="word-section">
+      <div id="word" class="word">_ _ _ _</div>
+      <div class="hint" id="hint">Elegí letras con el teclado o tocá los botones.</div>
+      <div id="letters" class="letters"></div>
+    </div>
+  </div>
+
+  <div class="status-row">
+    <span id="status">Listo para jugar</span>
+    <span>💡 Consejo: F11 para pantalla completa</span>
+  </div>
+</div>
+
+<script>
+/* ===== Utilidades ===== */
+const $=s=>document.querySelector(s);
+const $$=s=>Array.from(document.querySelectorAll(s));
+const stripAccents = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const onlyLetters = s => (s||'').toLowerCase().replace(/[^a-zñáéíóúü]/gi,'');
+
+/* ===== Estado ===== */
+let secretRaw='', secretNorm='', display=[], tries=6, score=0, ended=false, lang='es';
+const EN_MIN_TRIES = 6;
+
+/* ===== Banco ES (grande) ===== */
+const PALABRAS_ES = [
+  // Animales
+  "perro","gato","jirafa","elefante","caballo","conejo","leon","tigre","zorro","oso","aguila","delfin","ballena","tortuga","lobo","panda",
+  "cocodrilo","hipopotamo","rinoceronte","cebra","canguro","koala","pinguino","flamenco","buho","colibri","serpiente","lagarto","rana",
+  "mariposa","abeja","hormiga","araña","mosquito","libelula","caracol","pulpo","medusa","tiburon","salmon","atun","sardina","cangrejo",
+  "langosta","camello","llama","alpaca","burro","oveja","cabra","vaca","cerdo","gallina","pato","ganso","pavo","paloma","loro","tucan",
+  
+  // Educación y tecnología
+  "escuela","aula","biblioteca","laboratorio","patio","universidad","colegio","computadora","teclado","pantalla","internet",
+  "profesor","estudiante","examen","tarea","libro","cuaderno","lapiz","boligrafo","marcador","pizarra","escritorio","silla",
+  "telefono","celular","tablet","laptop","mouse","impresora","escaner","camara","microfono","auricular","altavoz","cable",
+  "software","hardware","programa","aplicacion","archivo","carpeta","documento","correo","mensaje","video","audio","imagen",
+  
+  // Ciencia
+  "foton","atomo","molecula","celula","planeta","orbita","galaxia","estrella","cometa","asteroide","satelite","telescopio",
+  "microscopio","experimento","laboratorio","quimica","fisica","biologia","matematica","geometria","algebra","calculo",
+  "energia","fuerza","velocidad","aceleracion","gravedad","magnetismo","electricidad","circuito","bateria","voltaje",
+  
+  // Cultura y entretenimiento
+  "musica","historia","geografia","pintura","escultura","teatro","cine","pelicula","serie","documental","concierto",
+  "guitarra","piano","violin","bateria","trompeta","saxofon","flauta","arpa","tambor","cancion","melodia","ritmo","armonia",
+  "deporte","futbol","baloncesto","tenis","voleibol","natacion","atletismo","gimnasia","ciclismo","boxeo","karate","judo",
+  "carrera","maraton","campeonato","torneo","medalla","trofeo","premio","victoria","equipo","jugador","entrenador","arbitro",
+  
+  // Naturaleza
+  "montaña","bosque","rio","playa","desierto","volcan","llanura","isla","cascada","glaciar","selva","pradera","valle","colina",
+  "lago","laguna","oceano","mar","bahia","golfo","peninsula","cabo","estrecho","arrecife","cueva","gruta","canyon","acantilado",
+  "arbol","flor","planta","hierba","arbusto","palmera","pino","roble","sauce","cerezo","rosa","tulipan","girasol","orquidea",
+  "nube","lluvia","tormenta","trueno","relampago","viento","huracan","tornado","niebla","nevada","granizo","arcoiris","aurora",
+  
+  // Objetos cotidianos
+  "mochila","regla","tijera","pegamento","botella","vaso","plato","cuchara","tenedor","cuchillo","olla","sarten","tetera",
+  "reloj","ventana","puerta","llave","cerradura","espejo","lampara","bombilla","interruptor","enchufe","cortina","alfombra",
+  "almohada","sabana","manta","colcha","toalla","jabon","shampoo","cepillo","peine","secador","perfume","crema","maquillaje",
+  "zapato","zapatilla","sandalia","bota","media","pantalon","camisa","remera","vestido","falda","chaqueta","abrigo","bufanda",
+  
+  // Comida
+  "manzana","banana","naranja","pera","uva","frutilla","durazno","melon","sandia","piña","mango","kiwi","cereza","ciruela",
+  "sandwich","empanada","pizza","hamburguesa","hotdog","taco","burrito","pasta","fideos","ravioles","lasagna","risotto",
+  "chocolate","helado","torta","pastel","galleta","caramelo","chicle","mermelada","miel","azucar","sal","pimienta","oregano",
+  "ensalada","tomate","lechuga","zanahoria","papa","cebolla","ajo","pimiento","pepino","brocoli","espinaca","maiz","arroz",
+  "pollo","carne","pescado","jamon","salchicha","chorizo","queso","manteca","leche","yogur","huevo","pan","tostada","medialunas",
+  
+  // Países y ciudades
+  "argentina","uruguay","chile","paraguay","brasil","españa","mexico","colombia","peru","bolivia","venezuela","ecuador","panama",
+  "costarica","guatemala","honduras","nicaragua","salvador","cuba","dominicana","puerto","italia","francia","alemania","inglaterra",
+  "portugal","grecia","holanda","belgica","suiza","austria","suecia","noruega","dinamarca","finlandia","rusia","china","japon",
+  "cordoba","mendoza","rosario","salta","tucuman","neuquen","bariloche","ushuaia","barcelona","madrid","valencia","sevilla",
+  "roma","milan","venecia","florencia","napoles","paris","lyon","marsella","berlin","munich","hamburgo","londres","manchester",
+  
+  // Conceptos abstractos
+  "familia","amigo","amor","felicidad","tristeza","alegria","miedo","enojo","sorpresa","esperanza","sueño","deseo","ilusion",
+  "trabajo","carrera","profesion","oficio","empleo","negocio","empresa","proyecto","objetivo","meta","logro","exito","fracaso",
+  "viaje","aventura","vacaciones","turismo","destino","pasaporte","maleta","hotel","hostal","camping","excursion","crucero",
+  "arte","cultura","tradicion","costumbre","festival","celebracion","fiesta","cumpleaños","boda","aniversario","graduacion",
+  "ciencia","tecnologia","innovacion","descubrimiento","invencion","investigacion","desarrollo","progreso","evolucion","futuro",
+  "libertad","justicia","igualdad","respeto","tolerancia","solidaridad","generosidad","honestidad","lealtad","valentia","sabiduria",
+  
+  // Profesiones
+  "medico","enfermero","doctor","cirujano","dentista","veterinario","farmaceutico","psicologo","terapeuta","nutricionista",
+  "ingeniero","arquitecto","constructor","electricista","plomero","carpintero","mecanico","soldador","pintor","albañil",
+  "maestro","profesor","director","rector","bibliotecario","pedagogo","tutor","instructor","capacitador","educador",
+  "abogado","juez","fiscal","notario","escribano","contador","auditor","economista","financiero","banquero","cajero",
+  "policia","bombero","militar","guardia","detective","investigador","agente","oficial","capitan","sargento","teniente",
+  "cocinero","chef","panadero","pastelero","barista","camarero","mozo","sommelier","bartender","nutricionista",
+  "periodista","reportero","editor","redactor","locutor","presentador","camarografo","fotografo","diseñador","ilustrador",
+  "musico","cantante","compositor","director","productor","actor","actriz","bailarin","coreografo","modelo","artista",
+  
+  // Verbos (infinitivos)
+  "correr","saltar","caminar","nadar","volar","bailar","cantar","tocar","escribir","leer","estudiar","aprender","enseñar",
+  "trabajar","jugar","dormir","despertar","comer","beber","cocinar","preparar","limpiar","ordenar","barrer","lavar","secar",
+  "pensar","imaginar","soñar","recordar","olvidar","sentir","amar","querer","odiar","temer","esperar","desear","necesitar",
+  "hablar","decir","gritar","susurrar","preguntar","responder","explicar","contar","narrar","describir","opinar","discutir",
+  "mirar","observar","ver","escuchar","oir","oler","tocar","sentir","probar","saborear","degustar","percibir","notar",
+  
+  // Adjetivos comunes
+  "grande","pequeño","alto","bajo","largo","corto","ancho","estrecho","grueso","delgado","pesado","liviano","fuerte","debil",
+  "rapido","lento","nuevo","viejo","joven","antiguo","moderno","clasico","simple","complejo","facil","dificil","posible",
+  "bueno","malo","mejor","peor","excelente","terrible","hermoso","feo","lindo","bonito","precioso","horrible","espantoso",
+  "feliz","triste","alegre","contento","enojado","furioso","tranquilo","nervioso","calmado","ansioso","preocupado","relajado",
+  "caliente","frio","tibio","helado","fresco","templado","humedo","seco","mojado","empapado","limpio","sucio","ordenado",
+  
+  // Colores
+  "rojo","azul","verde","amarillo","naranja","violeta","morado","rosa","blanco","negro","gris","marron","celeste","turquesa",
+  "dorado","plateado","bronce","beige","crema","coral","salmon","magenta","fucsia","lila","lavanda","indigo","cian","esmeralda"
+];
+
+/* ===== Letras por idioma ===== */
+const ALPHABET_EN = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+const ALPHABET_ES = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split('');
+
+/* ===== Confetti ===== */
+function createConfetti() {
+  const colors = ['#00bcd4', '#0097a7', '#00d4ff', '#4dd0e1', '#80deea', '#ffffff', '#b3e5fc'];
+  for (let i = 0; i < 50; i++) {
+    setTimeout(() => {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      confetti.style.left = Math.random() * 100 + '%';
+      confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.animationDelay = Math.random() * 0.5 + 's';
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 3000);
+    }, i * 30);
+  }
+}
+
+/* ===== UI ===== */
+function faceByTries(t){ return ['💀','😫','😟','😐','🙂','😃','🤩'][t]; }
+function draw(){
+  $('#word').textContent = display.join(' ');
+  $('#tries').textContent = String(tries);
+  $('#face').textContent = faceByTries(Math.max(0,Math.min(6,tries)));
+}
+function setStatus(t, isWin=false, isLose=false){
+  const el = $('#status');
+  el.textContent = t;
+  el.className = isWin ? 'win' : (isLose ? 'lose' : '');
+}
+
+function buildLetters(){
+  const box=$('#letters');
+  box.innerHTML='';
+  const letters = (lang==='es'? ALPHABET_ES : ALPHABET_EN);
+  letters.forEach(ch=>{
+    const b=document.createElement('button');
+    b.className='btnL';
+    b.textContent=ch;
+    b.onclick=()=> guess((ch==='Ñ'?'N':ch).toLowerCase(), b);
+    box.appendChild(b);
+  });
+}
+function lockLetters(disabled=true){
+  $$('#letters .btnL').forEach(b=>b.disabled=disabled);
+}
+
+/* ===== Juego ===== */
+function revealAll(win){
+  ended=true;
+  lockLetters(true);
+  if(win){
+    score++;
+    $('#score').textContent=String(score);
+    setStatus(lang==='es'?'¡Correcto! 🎉':'Correct! 🎉', true, false);
+    createConfetti();
+  } else {
+    setStatus((lang==='es'?'La palabra era: ':'The word was: ')+secretRaw, false, true);
+  }
+}
+
+function guess(letter, btnEl){
+  if(ended) return;
+  if(btnEl) btnEl.disabled=true;
+  const L = stripAccents(letter).toLowerCase();
+  let hit=false;
+  secretRaw.split('').forEach((ch,i)=>{
+    if(stripAccents(ch).toLowerCase()===L){
+      display[i]=ch.toUpperCase();
+      hit=true;
+    }
+  });
+  if(!hit){ tries--; }
+  draw();
+  if(display.join('').toLowerCase()===secretRaw.toUpperCase().toLowerCase()){
+    revealAll(true);
+  } else if(tries===0){
+    revealAll(false);
+  }
+}
+
+/* ===== Palabra nueva ===== */
+async function newWord(){
+  ended=false;
+  lockLetters(false);
+  if(lang==='en'){
+    tries = EN_MIN_TRIES;
+    const len = parseInt($('#enLen').value || '5',10);
+    setStatus('Fetching word…');
+    let w='';
+    try{
+      const r = await fetch(`https://random-word-api.herokuapp.com/word?number=1&length=${len}`);
+      const j = await r.json();
+      w = (j[0]||'apple').toLowerCase();
+    }catch{
+      w='apple';
+    }
+    w = w.replace(/[^a-z]/g,'');
+    if(w.length<3) w='planet';
+    secretRaw = w;
+  }else{
+    tries = 6;
+    const pick = PALABRAS_ES[Math.floor(Math.random()*PALABRAS_ES.length)];
+    secretRaw = onlyL
