@@ -110,7 +110,7 @@
   {
     "grupo": 13,
     "integrantes": ["Equipo Prog"],
-    "juego": "banderas",
+    "juego": "peliculas",
     "titulo": "Adivina la Película",
     "img": "pelis_00.jpg",
      "link": "pelis_00/pelis.html",
@@ -118,11 +118,12 @@
   },
   {
     "grupo": 14,
-    "integrantes": ["Equipo 14"],
-    "juego": "capitales",
-    "titulo": "🌍 Juego Próximo",
-    "img": "capitales.png",
-    "enabled": false
+    "integrantes": ["Equipo Prog"],
+    "juego": "cancion",
+    "titulo": "Adivina la canción",
+    "img": "cancion_00.jpg",
+    "link": "cancion_00/cancion.html",
+    "enabled": true
   },
   {
     "grupo": 15,
