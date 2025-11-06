@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡Adivina por Emojis!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #FF6B6B 0%, #FFD93D 25%, #6BCF7F 50%, #4D96FF 75%, #9D4EDD 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* Decorative floating emojis */
+    .floating-emoji {
+      position: absolute;
+      font-size: 40px;
+      opacity: 0.15;
+      animation: float 20s infinite ease-in-out;
+      pointer-events: none;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(10deg); }
+    }
+
+    .floating-emoji:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+    .floating-emoji:nth-child(2) { top: 20%; right: 15%; animation-delay: 2s; }
+    .floating-emoji:nth-child(3) { bottom: 15%; left: 20%; animation-delay: 4s; }
+    .floating-emoji:nth-child(4) { bottom: 25%; right: 10%; animation-delay: 6s; }
+    .floating-emoji:nth-child(5) { top: 50%; left: 5%; animation-delay: 8s; }
+    .floating-emoji:nth-child(6) { top: 60%; right: 5%; animation-delay: 10s; }
+
+    .game-title {
+      text-align: center;
+      font-size: 52px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 25px;
+      text-shadow: 4px 4px 0 rgba(0,0,0,0.2),
+                   -2px -2px 0 rgba(255,255,255,0.3);
+      animation: titleBounce 2s ease-in-out infinite;
+      z-index: 10;
+    }
+
+    @keyframes titleBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .app {
+      background: white;
+      border-radius: 30px;
+      padding: 25px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 1400px;
+      width: 100%;
+      animation: slideIn 0.6s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 18px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      animation: pillPop 0.4s ease-out;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    @keyframes pillPop {
+      0% { transform: scale(0.8); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .pill.score {
+      background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+      color: white;
+    }
+
+    .pill.value {
+      background: linear-gradient(135deg, #FFD93D, #FFA500);
+      color: white;
+    }
+
+    .pill.round {
+      background: linear-gradient(135deg, #9D4EDD, #C77DFF);
+      color: white;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background: #E0E0E0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #FF6B6B, #FFD93D, #6BCF7F, #4D96FF, #9D4EDD);
+      background-size: 200% 100%;
+      border-radius: 10px;
+      transition: width 0.5s ease;
+      animation: progressShimmer 3s linear infinite;
+    }
+
+    @keyframes progressShimmer {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 200% 0%; }
+    }
+
+    .game-area {
+      display: grid;
+      grid-template-columns: 45% 55%;
+      gap: 25px;
+      margin-bottom: 20px;
+    }
+
+    .emoji-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #FFF5E1 0%, #FFE4E1 100%);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      min-height: 400px;
+    }
+
+    .category-badge {
+      background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(255,107,107,0.3);
+    }
+
+    .emoji-display {
+      font-size: 80px;
+      line-height: 1.3;
+      text-align: center;
+      margin: 20px 0;
+      animation: emojiPulse 2s ease-in-out infinite;
+      letter-spacing: 10px;
+    }
+
+    @keyframes emojiPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .hint-btn {
+      background: linear-gradient(135deg, #FFA500, #FF8C00);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 25px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(255,165,0,0.4);
+      transition: all 0.3s ease;
+      margin-top: 15px;
+    }
+
+    .hint-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(255,165,0,0.5);
+    }
+
+    .hint-btn:active {
+      transform: translateY(0);
+    }
+
+    .hint-text {
+      margin-top: 15px;
+      font-size: 18px;
+      color: #666;
+      font-style: italic;
+      text-align: center;
+    }
+
+    .answers-section {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+	  max-width:98%;
+    }
+
+    .answer-btn {
+      background: linear-gradient(135deg, #9D4EDD, #C77DFF);
+      color: white;
+      border: none;
+      padding: 20px;
+      border-radius: 15px;
+      font-size: 24px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 15px rgba(157,78,221,0.3);
+      text-align: center;
+    }
+
+    .answer-btn:hover {
+      transform: translateX(5px);
+      box-shadow: 0 8px 20px rgba(157,78,221,0.4);
+    }
+
+    .answer-btn.correct {
+      background: linear-gradient(135deg, #6BCF7F, #4CAF50);
+      animation: correctPulse 0.6s ease;
+    }
+
+    .answer-btn.wrong {
+      background: linear-gradient(135deg, #FF6B6B, #E74C3C);
+      animation: wrongShake 0.5s ease;
+    }
+
+    @keyframes correctPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes wrongShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .status-text {
+      font-size: 18px;
+      color: #666;
+      font-weight: 600;
+    }
+
+    .next-btn {
+      background: linear-gradient(135deg, #FF6B9D, #C44569);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 25px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(255,107,157,0.4);
+      transition: all 0.3s ease;
+    }
+
+    .next-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(255,107,157,0.5);
+    }
+
+    .next-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Confetti */
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: #f0f;
+      position: absolute;
+      animation: confetti-fall 3s linear forwards;
+    }
+
+    @keyframes confetti-fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .game-area {
+        grid-template-columns: 1fr;
+      }
+      
+      .game-title {
+        font-size: 36px;
+      }
+      
+      .emoji-display {
+        font-size: 60px;
+      }
+      
+      .answer-btn {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="floating-emoji">🎬</div>
+  <div class="floating-emoji">🎵</div>
+  <div class="floating-emoji">🎮</div>
+  <div class="floating-emoji">🍕</div>
+  <div class="floating-emoji">⚽</div>
+  <div class="floating-emoji">🎨</div>
+
+  <div class="game-title">🤔 ¡Adivina por Emojis!</div>
+
+  <div class="app">
+    <div class="stats-row">
+      <div class="pill score">
+        <span>⭐</span>
+        <span>Puntos: <span id="score">0</span></span>
+      </div>
+      <div class="pill value">
+        <span>💎</span>
+        <span>Valor: <span id="value">5</span>pts</span>
+      </div>
+      <div class="pill round">
+        <span>🎯</span>
+        <span>Ronda: <span id="round">1</span>/10</span>
+      </div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+
+    <div class="game-area">
+      <div class="emoji-section">
+        <div class="category-badge" id="category">Película</div>
+        <div class="emoji-display" id="emojiDisplay">🦁👑</div>
+        <button class="hint-btn" id="hintBtn" onclick="showHint()">💡 Pista (-1 punto)</button>
+        <div class="hint-text" id="hintText"></div>
+      </div>
+
+      <div class="answers-section" id="answersSection">
+        <!-- Buttons will be generated here -->
+      </div>
+    </div>
+
+    <div class="status-row">
+      <div class="status-text" id="statusText">✨ ¡Adivina qué representa!</div>
+      <button class="next-btn" id="nextBtn" onclick="nextRound()" disabled>Siguiente Ronda ▶️</button>
+    </div>
+  </div>
+
+  <script>
+    const PUZZLES = [
+      // Películas
+      { emojis: '🦁👑', answer: 'El Rey León', options: ['El Rey León', 'Madagascar', 'Tarzán', 'Jungle Book'], category: 'Película', hint: 'Clásico de Disney en África' },
+      { emojis: '🕷️👨', answer: 'Spider-Man', options: ['Spider-Man', 'Batman', 'Superman', 'Iron Man'], category: 'Película', hint: 'Superhéroe arácnido' },
+      { emojis: '❄️👸', answer: 'Frozen', options: ['Frozen', 'La Sirenita', 'Blancanieves', 'Cenicienta'], category: 'Película', hint: 'Let it go...' },
+      { emojis: '🏴‍☠️🌊', answer: 'Piratas del Caribe', options: ['Piratas del Caribe', 'Moana', 'Titanic', 'Buscando a Nemo'], category: 'Película', hint: 'Jack Sparrow' },
+      { emojis: '🦖🌴', answer: 'Jurassic Park', options: ['Jurassic Park', 'King Kong', 'Godzilla', 'Ice Age'], category: 'Película', hint: 'Dinosaurios vuelven a la vida' },
+      { emojis: '🧙‍♂️⚡', answer: 'Harry Potter', options: ['Harry Potter', 'El Señor de los Anillos', 'Narnia', 'Percy Jackson'], category: 'Película', hint: 'Mago con cicatriz' },
+      { emojis: '🚗⚡', answer: 'Cars', options: ['Cars', 'Rápido y Furioso', 'Transformers', 'Need for Speed'], category: 'Película', hint: 'Autos que hablan' },
+      { emojis: '🐠🔍', answer: 'Buscando a Nemo', options: ['Buscando a Nemo', 'La Sirenita', 'Moana', 'Tiburón'], category: 'Película', hint: 'Pez payaso perdido' },
+      { emojis: '🍕🐀', answer: 'Ratatouille', options: ['Ratatouille', 'Stuart Little', 'Tom y Jerry', 'Flushed Away'], category: 'Película', hint: 'Rata cocinera en París' },
+      { emojis: '🏠🎈', answer: 'Up', options: ['Up', 'Toy Story', 'Wall-E', 'Los Increíbles'], category: 'Película', hint: 'Casa voladora con globos' },
+      { emojis: '🧸🚀', answer: 'Toy Story', options: ['Toy Story', 'Wall-E', 'Monsters Inc', 'Los Increíbles'], category: 'Película', hint: 'Juguetes que cobran vida' },
+      { emojis: '👻🏠', answer: 'Casper', options: ['Casper', 'Ghostbusters', 'Monster House', 'Coraline'], category: 'Película', hint: 'Fantasma amigable' },
+      { emojis: '🐭🧀', answer: 'Ratatouille', options: ['Ratatouille', 'Stuart Little', 'Fievel', 'Rescatadores'], category: 'Película', hint: 'Ratón chef' },
+      { emojis: '🦸‍♂️💪', answer: 'Los Increíbles', options: ['Los Increíbles', 'Los Vengadores', 'Big Hero 6', 'Megamente'], category: 'Película', hint: 'Familia de superhéroes' },
+      { emojis: '🐉🏯', answer: 'Mulan', options: ['Mulan', 'Kung Fu Panda', 'Raya', 'Moana'], category: 'Película', hint: 'Guerrera china con dragón' },
+      { emojis: '🦇🌃', answer: 'Batman', options: ['Batman', 'Spider-Man', 'Superman', 'Iron Man'], category: 'Película', hint: 'Caballero de la noche' },
+      { emojis: '🐼🥋', answer: 'Kung Fu Panda', options: ['Kung Fu Panda', 'Mulan', 'Karate Kid', 'Raya'], category: 'Película', hint: 'Oso que hace artes marciales' },
+      { emojis: '🧜‍♀️🌊', answer: 'La Sirenita', options: ['La Sirenita', 'Moana', 'Frozen', 'Buscando a Nemo'], category: 'Película', hint: 'Princesa bajo el mar' },
+      { emojis: '🐘🎪', answer: 'Dumbo', options: ['Dumbo', 'Bambi', 'El Rey León', 'Madagascar'], category: 'Película', hint: 'Elefante con orejas grandes' },
+      { emojis: '🤖🗑️', answer: 'Wall-E', options: ['Wall-E', 'Transformers', 'Big Hero 6', 'Iron Giant'], category: 'Película', hint: 'Robot que limpia basura' },
+      { emojis: '👸🥿', answer: 'Cenicienta', options: ['Cenicienta', 'Blancanieves', 'Bella Durmiente', 'Rapunzel'], category: 'Película', hint: 'Zapato de cristal' },
+      { emojis: '🍎👸', answer: 'Blancanieves', options: ['Blancanieves', 'Cenicienta', 'Bella', 'Aurora'], category: 'Película', hint: 'Manzana envenenada' },
+      { emojis: '🌹🦁', answer: 'La Bella y la Bestia', options: ['La Bella y la Bestia', 'El Rey León', 'Shrek', 'Frozen'], category: 'Película', hint: 'Rosa encantada' },
+      { emojis: '🏹👸', answer: 'Valiente', options: ['Valiente', 'Mulan', 'Frozen', 'Moana'], category: 'Película', hint: 'Princesa pelirroja arquera' },
+      { emojis: '🌊🏝️', answer: 'Moana', options: ['Moana', 'La Sirenita', 'Buscando a Nemo', 'Luca'], category: 'Película', hint: 'Navega por el océano' },
+      { emojis: '🎸💀', answer: 'Coco', options: ['Coco', 'El Libro de la Vida', 'Encanto', 'Vivo'], category: 'Película', hint: 'Día de muertos mexicano' },
+      { emojis: '🦜🏠', answer: 'Encanto', options: ['Encanto', 'Coco', 'Moana', 'Vivo'], category: 'Película', hint: 'Casa mágica colombiana' },
+      { emojis: '🐻🍯', answer: 'Winnie Pooh', options: ['Winnie Pooh', 'Paddington', 'Yogi Bear', 'Brother Bear'], category: 'Película', hint: 'Oso amarillo que ama la miel' },
+      { emojis: '🦒🦓', answer: 'Madagascar', options: ['Madagascar', 'El Rey León', 'Tarzán', 'Jungle Book'], category: 'Película', hint: 'Animales del zoológico' },
+      { emojis: '🐲🗡️', answer: 'Shrek', options: ['Shrek', 'El Señor de los Anillos', 'Dragones', 'Mulan'], category: 'Película', hint: 'Ogro verde' },
+      { emojis: '🎩🍫', answer: 'Charlie y la Fábrica de Chocolate', options: ['Charlie y la Fábrica de Chocolate', 'Ratatouille', 'Cloudy with Meatballs', 'Willy Wonka'], category: 'Película', hint: 'Boleto dorado' },
+      { emojis: '🐝🎬', answer: 'Bee Movie', options: ['Bee Movie', 'Antz', 'A Bug\'s Life', 'The Ant Bully'], category: 'Película', hint: 'Abeja que habla' },
+      { emojis: '🐜🐜', answer: 'Bichos', options: ['Bichos', 'Bee Movie', 'Antz', 'The Ant Bully'], category: 'Película', hint: 'Hormigas de Pixar' },
+      { emojis: '👽📞', answer: 'E.T.', options: ['E.T.', 'Star Wars', 'Alien', 'Close Encounters'], category: 'Película', hint: 'Extraterrestre que llama a casa' },
+      { emojis: '🦈🌊', answer: 'Tiburón', options: ['Tiburón', 'Buscando a Nemo', 'Moby Dick', 'Pirañas'], category: 'Película', hint: 'Terror en el agua' },
+      { emojis: '🐒🌴', answer: 'Tarzán', options: ['Tarzán', 'Jungle Book', 'George de la Selva', 'Madagascar'], category: 'Película', hint: 'Hombre criado por simios' },
+      { emojis: '🎪🐘', answer: 'El Gran Showman', options: ['El Gran Showman', 'Dumbo', 'Cirque du Soleil', 'Water for Elephants'], category: 'Película', hint: 'Musical de circo' },
+      
+      // Canciones
+      { emojis: '👶🦈', answer: 'Baby Shark', options: ['Baby Shark', 'Under the Sea', 'Hakuna Matata', 'Let It Go'], category: 'Canción', hint: 'Canción viral infantil' },
+      { emojis: '🌟💫', answer: 'Twinkle Twinkle Little Star', options: ['Twinkle Twinkle Little Star', 'Somewhere Over the Rainbow', 'When You Wish Upon a Star', 'Starlight'], category: 'Canción', hint: 'Estrellita dónde estás' },
+      { emojis: '🎂🎉', answer: 'Cumpleaños Feliz', options: ['Cumpleaños Feliz', 'Las Mañanitas', 'Feliz Navidad', 'Celebra'], category: 'Canción', hint: 'Se canta en fiestas' },
+      { emojis: '🌈☀️', answer: 'Somewhere Over the Rainbow', options: ['Somewhere Over the Rainbow', 'Here Comes the Sun', 'Walking on Sunshine', 'Rainbow Connection'], category: 'Canción', hint: 'Del Mago de Oz' },
+      { emojis: '💃🕺', answer: 'Despacito', options: ['Despacito', 'Bailando', 'La Bicicleta', 'Vivir Mi Vida'], category: 'Canción', hint: 'Hit mundial de Luis Fonsi' },
+      { emojis: '🎄🔔', answer: 'Jingle Bells', options: ['Jingle Bells', 'Feliz Navidad', 'White Christmas', 'Silent Night'], category: 'Canción', hint: 'Canción navideña clásica' },
+      { emojis: '🐝🎵', answer: 'La Abeja', options: ['La Abeja', 'La Vaca Lola', 'El Pollito Pío', 'La Gallina Turuleca'], category: 'Canción', hint: 'Canción infantil de insecto' },
+      { emojis: '🐄🎶', answer: 'La Vaca Lola', options: ['La Vaca Lola', 'La Abeja', 'El Pollito Pío', 'La Granja'], category: 'Canción', hint: 'Tiene cabeza y cola' },
+      { emojis: '🐥🎵', answer: 'El Pollito Pío', options: ['El Pollito Pío', 'La Vaca Lola', 'La Gallina Turuleca', 'Los Pollitos'], category: 'Canción', hint: 'Pío pío pío' },
+      { emojis: '🌙⭐', answer: 'Estrellita Dónde Estás', options: ['Estrellita Dónde Estás', 'Twinkle Star', 'Luna Lunera', 'Brilla Brilla'], category: 'Canción', hint: 'Canción de cuna' },
+      { emojis: '🚌🎶', answer: 'Las Ruedas del Autobús', options: ['Las Ruedas del Autobús', 'El Tren', 'El Barco', 'El Avión'], category: 'Canción', hint: 'Giran y giran' },
+      { emojis: '🎸🔥', answer: 'We Will Rock You', options: ['We Will Rock You', 'Bohemian Rhapsody', 'Another One Bites', 'Radio Gaga'], category: 'Canción', hint: 'Queen - Palmadas y pisadas' },
+      { emojis: '💔😢', answer: 'Someone Like You', options: ['Someone Like You', 'Hello', 'Rolling in the Deep', 'Set Fire'], category: 'Canción', hint: 'Adele - Balada triste' },
+      { emojis: '🌊🏄', answer: 'Surfin USA', options: ['Surfin USA', 'California Girls', 'Good Vibrations', 'Kokomo'], category: 'Canción', hint: 'Beach Boys - Surf' },
+      { emojis: '🎤🎸', answer: 'Bohemian Rhapsody', options: ['Bohemian Rhapsody', 'We Will Rock You', 'Imagine', 'Stairway to Heaven'], category: 'Canción', hint: 'Queen - Ópera rock' },
+      
+      // Comidas
+      { emojis: '🍕🇮🇹', answer: 'Pizza', options: ['Pizza', 'Pasta', 'Lasagna', 'Ravioles'], category: 'Comida', hint: 'Redonda con queso' },
+      { emojis: '🌮🇲🇽', answer: 'Tacos', options: ['Tacos', 'Burritos', 'Quesadillas', 'Enchiladas'], category: 'Comida', hint: 'Tortilla doblada mexicana' },
+      { emojis: '🍔🍟', answer: 'Hamburguesa con Papas', options: ['Hamburguesa con Papas', 'Hot Dog', 'Sandwich', 'Milanesa'], category: 'Comida', hint: 'Combo de comida rápida' },
+      { emojis: '🍝🧀', answer: 'Pasta con Queso', options: ['Pasta con Queso', 'Mac and Cheese', 'Ravioles', 'Ñoquis'], category: 'Comida', hint: 'Fideos con queso' },
+      { emojis: '🍦🍨', answer: 'Helado', options: ['Helado', 'Yogurt', 'Flan', 'Gelatina'], category: 'Comida', hint: 'Postre frío y dulce' },
+      { emojis: '🍣🥢', answer: 'Sushi', options: ['Sushi', 'Ramen', 'Tempura', 'Yakitori'], category: 'Comida', hint: 'Comida japonesa con arroz' },
+      { emojis: '🥟🥢', answer: 'Empanadas', options: ['Empanadas', 'Dumplings', 'Ravioles', 'Pierogi'], category: 'Comida', hint: 'Masa rellena argentina' },
+      { emojis: '🥩🔥', answer: 'Asado', options: ['Asado', 'Parrillada', 'BBQ', 'Churrasco'], category: 'Comida', hint: 'Carne a la parrilla argentina' },
+      { emojis: '🍰☕', answer: 'Torta con Café', options: ['Torta con Café', 'Té con Pastel', 'Brownie', 'Cheesecake'], category: 'Comida', hint: 'Postre y bebida caliente' },
+      { emojis: '🌭🥤', answer: 'Pancho', options: ['Pancho', 'Hot Dog', 'Choripán', 'Salchicha'], category: 'Comida', hint: 'Salchicha en pan' },
+      { emojis: '🥐🧈', answer: 'Medialunas', options: ['Medialunas', 'Croissant', 'Facturas', 'Pan Dulce'], category: 'Comida', hint: 'Desayuno argentino' },
+      { emojis: '🧉🌿', answer: 'Mate', options: ['Mate', 'Té', 'Café', 'Tereré'], category: 'Comida', hint: 'Bebida argentina tradicional' },
+      { emojis: '🍫🥛', answer: 'Chocolatada', options: ['Chocolatada', 'Café con Leche', 'Licuado', 'Batido'], category: 'Comida', hint: 'Leche con chocolate' },
+      
+      // Deportes
+      { emojis: '⚽🏆', answer: 'Copa del Mundo', options: ['Copa del Mundo', 'Champions League', 'Copa América', 'Libertadores'], category: 'Deporte', hint: 'Torneo de fútbol mundial' },
+      { emojis: '🏀🏀', answer: 'Básquetbol', options: ['Básquetbol', 'Vóley', 'Handball', 'Tenis'], category: 'Deporte', hint: 'Deporte con canasta' },
+      { emojis: '🎾🎾', answer: 'Tenis', options: ['Tenis', 'Ping Pong', 'Bádminton', 'Squash'], category: 'Deporte', hint: 'Deporte con raqueta' },
+      { emojis: '🏊‍♂️🌊', answer: 'Natación', options: ['Natación', 'Surf', 'Waterpolo', 'Buceo'], category: 'Deporte', hint: 'Deporte en piscina' },
+      { emojis: '🚴‍♂️🚴', answer: 'Ciclismo', options: ['Ciclismo', 'Motocross', 'BMX', 'Triatlon'], category: 'Deporte', hint: 'Deporte en bicicleta' },
+      { emojis: '🥊🥊', answer: 'Boxeo', options: ['Boxeo', 'Karate', 'Taekwondo', 'Judo'], category: 'Deporte', hint: 'Deporte de combate con guantes' },
+      { emojis: '🏐🏐', answer: 'Vóley', options: ['Vóley', 'Básquet', 'Handball', 'Tenis'], category: 'Deporte', hint: 'Deporte con red y pelota' },
+      { emojis: '🏃‍♂️💨', answer: 'Atletismo', options: ['Atletismo', 'Maratón', 'Sprint', 'Carrera'], category: 'Deporte', hint: 'Correr en pista' },
+      { emojis: '⛷️❄️', answer: 'Esquí', options: ['Esquí', 'Snowboard', 'Patinaje', 'Hockey'], category: 'Deporte', hint: 'Deporte de nieve' },
+      { emojis: '🏋️‍♂️💪', answer: 'Levantamiento de Pesas', options: ['Levantamiento de Pesas', 'Gimnasia', 'Crossfit', 'Bodybuilding'], category: 'Deporte', hint: 'Deporte de fuerza' },
+      
+      // Animales
+      { emojis: '🐶🦴', answer: 'Perro', options: ['Perro', 'Gato', 'Lobo', 'Zorro'], category: 'Animal', hint: 'Mejor amigo del hombre' },
+      { emojis: '🐱🥛', answer: 'Gato', options: ['Gato', 'Perro', 'Tigre', 'León'], category: 'Animal', hint: 'Mascota que maúlla' },
+      { emojis: '🐘👃', answer: 'Elefante', options: ['Elefante', 'Rinoceronte', 'Hipopótamo', 'Jirafa'], category: 'Animal', hint: 'Animal con trompa' },
+      { emojis: '🦒🌿', answer: 'Jirafa', options: ['Jirafa', 'Cebra', 'Antílope', 'Canguro'], category: 'Animal', hint: 'Animal de cuello largo' },
+      { emojis: '🐧❄️', answer: 'Pingüino', options: ['Pingüino', 'Foca', 'Oso Polar', 'Morsa'], category: 'Animal', hint: 'Ave que no vuela del frío' },
+      { emojis: '🦁🌍', answer: 'León', options: ['León', 'Tigre', 'Leopardo', 'Guepardo'], category: 'Animal', hint: 'Rey de la selva' },
+      { emojis: '🐯🐾', answer: 'Tigre', options: ['Tigre', 'León', 'Leopardo', 'Jaguar'], category: 'Animal', hint: 'Felino con rayas' },
+      { emojis: '🐻🍯', answer: 'Oso', options: ['Oso', 'Panda', 'Koala', 'Oso Polar'], category: 'Animal', hint: 'Animal grande peludo' },
+      { emojis: '🐼🎋', answer: 'Panda', options: ['Panda', 'Oso', 'Koala', 'Mapache'], category: 'Animal', hint: 'Oso blanco y negro' },
+      { emojis: '🦘🇦🇺', answer: 'Canguro', options: ['Canguro', 'Wallaby', 'Koala', 'Wombat'], category: 'Animal', hint: 'Animal que salta de Australia' },
+      { emojis: '🐒🍌', answer: 'Mono', options: ['Mono', 'Gorila', 'Chimpancé', 'Orangután'], category: 'Animal', hint: 'Primate que come bananas' },
+      { emojis: '🦅🏔️', answer: 'Águila', options: ['Águila', 'Halcón', 'Cóndor', 'Buitre'], category: 'Animal', hint: 'Ave rapaz majestuosa' },
+      
+      // Profesiones
+      { emojis: '👨‍⚕️💉', answer: 'Doctor', options: ['Doctor', 'Enfermero', 'Dentista', 'Veterinario'], category: 'Profesión', hint: 'Cura enfermedades' },
+      { emojis: '👨‍🚒🔥', answer: 'Bombero', options: ['Bombero', 'Policía', 'Paramédico', 'Soldado'], category: 'Profesión', hint: 'Apaga incendios' },
+      { emojis: '👨‍🍳🍳', answer: 'Cocinero', options: ['Cocinero', 'Panadero', 'Pastelero', 'Mesero'], category: 'Profesión', hint: 'Prepara comida' },
+      { emojis: '👨‍🏫📚', answer: 'Maestro', options: ['Maestro', 'Profesor', 'Director', 'Bibliotecario'], category: 'Profesión', hint: 'Enseña en la escuela' },
+      { emojis: '👨‍✈️✈️', answer: 'Piloto', options: ['Piloto', 'Azafata', 'Mecánico', 'Controlador'], category: 'Profesión', hint: 'Vuela aviones' },
+      { emojis: '👮‍♂️🚔', answer: 'Policía', options: ['Policía', 'Bombero', 'Guardia', 'Detective'], category: 'Profesión', hint: 'Cuida la seguridad' },
+      { emojis: '👨‍💼💼', answer: 'Oficinista', options: ['Oficinista', 'Contador', 'Abogado', 'Gerente'], category: 'Profesión', hint: 'Trabaja en oficina' },
+      { emojis: '👨‍🔧🔧', answer: 'Mecánico', options: ['Mecánico', 'Electricista', 'Plomero', 'Carpintero'], category: 'Profesión', hint: 'Arregla autos' },
+      { emojis: '👨‍🎨🎨', answer: 'Artista', options: ['Artista', 'Pintor', 'Escultor', 'Diseñador'], category: 'Profesión', hint: 'Crea arte' },
+      { emojis: '👨‍💻💻', answer: 'Programador', options: ['Programador', 'Ingeniero', 'Diseñador', 'Analista'], category: 'Profesión', hint: 'Escribe código' },
+      
+      // Lugares
+      { emojis: '🗽🇺🇸', answer: 'Nueva York', options: ['Nueva York', 'Los Ángeles', 'Chicago', 'Miami'], category: 'Lugar', hint: 'Ciudad con Estatua de la Libertad' },
+      { emojis: '🗼🇫🇷', answer: 'París', options: ['París', 'Londres', 'Roma', 'Madrid'], category: 'Lugar', hint: 'Ciudad con Torre Eiffel' },
+      { emojis: '🏖️🌴', answer: 'Playa', options: ['Playa', 'Montaña', 'Bosque', 'Desierto'], category: 'Lugar', hint: 'Lugar con arena y mar' },
+      { emojis: '🏔️⛷️', answer: 'Montaña', options: ['Montaña', 'Volcán', 'Colina', 'Valle'], category: 'Lugar', hint: 'Lugar alto para esquiar' },
+      { emojis: '🏛️🇬🇷', answer: 'Grecia', options: ['Grecia', 'Italia', 'Egipto', 'Turquía'], category: 'Lugar', hint: 'País con ruinas antiguas' },
+      { emojis: '🗿🌴', answer: 'Isla de Pascua', options: ['Isla de Pascua', 'Hawái', 'Tahití', 'Fiji'], category: 'Lugar', hint: 'Isla con estatuas gigantes' },
+      { emojis: '🏰👸', answer: 'Castillo', options: ['Castillo', 'Palacio', 'Fortaleza', 'Torre'], category: 'Lugar', hint: 'Hogar de reyes y princesas' },
+      { emojis: '🏜️🐪', answer: 'Desierto', options: ['Desierto', 'Playa', 'Sabana', 'Estepa'], category: 'Lugar', hint: 'Lugar con mucha arena' },
+      { emojis: '🌋🔥', answer: 'Volcán', options: ['Volcán', 'Montaña', 'Géiser', 'Cráter'], category: 'Lugar', hint: 'Montaña que expulsa lava' },
+      { emojis: '🏙️🌃', answer: 'Ciudad', options: ['Ciudad', 'Pueblo', 'Metrópolis', 'Capital'], category: 'Lugar', hint: 'Lugar urbano grande' }
+    ];
+
+    let currentRound = 0;
+    let score = 0;
+    let currentValue = 5;
+    let answered = false;
+    let currentPuzzle = null;
+    let hintUsed = false;
+
+    function shuffleArray(array) {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      }
+      return newArray;
+    }
+
+    function loadRound() {
+      answered = false;
+      hintUsed = false;
+      currentValue = 5;
+      document.getElementById('value').textContent = currentValue;
+      document.getElementById('hintText').textContent = '';
+      document.getElementById('hintBtn').disabled = false;
+      document.getElementById('nextBtn').disabled = true;
+      document.getElementById('statusText').textContent = '✨ ¡Adivina qué representa!';
+
+      const availablePuzzles = PUZZLES.filter((_, index) => index !== currentPuzzle);
+      currentPuzzle = Math.floor(Math.random() * PUZZLES.length);
+      const puzzle = PUZZLES[currentPuzzle];
+
+      document.getElementById('category').textContent = puzzle.category;
+      document.getElementById('emojiDisplay').textContent = puzzle.emojis;
+
+      const answersSection = document.getElementById('answersSection');
+      answersSection.innerHTML = '';
+
+      const shuffledOptions = shuffleArray(puzzle.options);
+      shuffledOptions.forEach(option => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.textContent = option;
+        btn.onclick = () => checkAnswer(option, puzzle.answer);
+        answersSection.appendChild(btn);
+      });
+
+      updateProgress();
+    }
+
+    function checkAnswer(selected, correct) {
+      if (answered) return;
+      answered = true;
+
+      const buttons = document.querySelectorAll('.answer-btn');
+      buttons.forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === correct) {
+          btn.classList.add('correct');
+        } else if (btn.textContent === selected && selected !== correct) {
+          btn.classList.add('wrong');
+        }
+      });
+
+      if (selected === correct) {
+        score += currentValue;
+        document.getElementById('score').textContent = score;
+        document.getElementById('statusText').textContent = '🎉 ¡Correcto! +' + currentValue + ' puntos';
+        createConfetti();
+      } else {
+        document.getElementById('statusText').textContent = '❌ Incorrecto. La respuesta era: ' + correct;
+      }
+
+      document.getElementById('hintBtn').disabled = true;
+      document.getElementById('nextBtn').disabled = false;
+    }
+
+    function showHint() {
+      if (hintUsed || answered) return;
+      hintUsed = true;
+      currentValue = Math.max(1, currentValue - 1);
+      document.getElementById('value').textContent = currentValue;
+      document.getElementById('hintText').textContent = '💡 ' + PUZZLES[currentPuzzle].hint;
+      document.getElementById('hintBtn').disabled = true;
+    }
+
+    function nextRound() {
+      currentRound++;
+      if (currentRound >= 10) {
+        alert(`🎊 ¡Juego terminado!\n\nPuntuación final: ${score} puntos\n\n¡Gracias por jugar!`);
+        currentRound = 0;
+        score = 0;
+        document.getElementById('score').textContent = score;
+      }
+      document.getElementById('round').textContent = currentRound + 1;
+      loadRound();
+    }
+
+    function updateProgress() {
+      const progress = ((currentRound + 1) / 10) * 100;
+      document.getElementById('progress').style.width = progress + '%';
+    }
+
+    function createConfetti() {
+      const colors = ['#FF6B6B', '#FFD93D', '#6BCF7F', '#4D96FF', '#9D4EDD', '#FF6B9D'];
+      for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          confetti.style.left = Math.random() * 100 + '%';
+          confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.animationDelay = Math.random() * 0.5 + 's';
+          document.body.appendChild(confetti);
+          setTimeout(() => confetti.remove(), 3000);
+        }, i * 30);
+      }
+    }
+
+    // Initialize game
+    loadRound();
+  </script>
+</body>
+</html>

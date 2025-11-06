@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Cuánto Cuesta?</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #FFD700 0%, #FFA500 25%, #FF8C00 50%, #FF6347 75%, #FFD700 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    /* Floating coins decoration */
+    .coin {
+      position: absolute;
+      font-size: 30px;
+      opacity: 0.3;
+      animation: float 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+    
+    .coin:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+    .coin:nth-child(2) { top: 20%; right: 15%; animation-delay: 1s; }
+    .coin:nth-child(3) { bottom: 15%; left: 20%; animation-delay: 2s; }
+    .coin:nth-child(4) { bottom: 25%; right: 10%; animation-delay: 3s; }
+    .coin:nth-child(5) { top: 50%; left: 5%; animation-delay: 1.5s; }
+    .coin:nth-child(6) { top: 60%; right: 8%; animation-delay: 2.5s; }
+    
+    .game-title {
+      text-align: center;
+      font-size: 52px;
+      font-weight: 800;
+      color: white;
+      text-shadow: 4px 4px 0px #FF6347, 6px 6px 0px #FF8C00;
+      margin-bottom: 20px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    .app {
+      background: white;
+      border-radius: 30px;
+      padding: 25px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 1400px;
+      width: 100%;
+      animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .pill {
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    
+    .pill.score {
+      background: linear-gradient(135deg, #FF1493, #FF69B4);
+      color: white;
+    }
+    
+    .pill.round {
+      background: linear-gradient(135deg, #9C27B0, #BA68C8);
+      color: white;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #FFD700, #FFA500, #FF8C00);
+      border-radius: 10px;
+      transition: width 0.5s ease;
+      box-shadow: 0 0 10px rgba(255,215,0,0.5);
+    }
+    
+    .game-area {
+      display: grid;
+      grid-template-columns: 45% 55%;
+      gap: 25px;
+      margin-bottom: 20px;
+    }
+    
+    .product-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    
+    .product-display {
+      background: linear-gradient(135deg, #FFF9E6, #FFFACD);
+      border: 5px solid #FFD700;
+      border-radius: 25px;
+      padding: 30px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 10px 30px rgba(255,215,0,0.3);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+    
+    .product-emoji {
+      font-size: 120px;
+      animation: rotate 3s ease-in-out infinite;
+    }
+    
+    @keyframes rotate {
+      0%, 100% { transform: rotate(-5deg); }
+      50% { transform: rotate(5deg); }
+    }
+    
+    .product-name {
+      font-size: 32px;
+      font-weight: 700;
+      color: #FF6347;
+      text-align: center;
+      text-shadow: 2px 2px 0px rgba(255,215,0,0.3);
+    }
+    
+    .guess-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      justify-content: center;
+    }
+    
+    .guess-label {
+      font-size: 28px;
+      font-weight: 700;
+      color: #FF6347;
+      text-align: center;
+    }
+    
+    .price-input {
+      width: 100%;
+      padding: 20px;
+      font-size: 36px;
+      font-weight: 700;
+      text-align: center;
+      border: 4px solid #FFD700;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #FFFACD, #FFF9E6);
+      color: #FF6347;
+      box-shadow: 0 5px 20px rgba(255,215,0,0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .price-input:focus {
+      outline: none;
+      border-color: #FFA500;
+      box-shadow: 0 5px 30px rgba(255,165,0,0.5);
+      transform: scale(1.02);
+    }
+    
+    .guess-btn {
+      padding: 20px 40px;
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #32CD32, #00FF00);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(50,205,50,0.4);
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+    }
+    
+    .guess-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(50,205,50,0.6);
+    }
+    
+    .guess-btn:active {
+      transform: translateY(0);
+    }
+    
+    .guess-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    
+    .result-display {
+      background: linear-gradient(135deg, #E6F7FF, #B3E5FC);
+      border: 4px solid #00BCD4;
+      border-radius: 20px;
+      padding: 25px;
+      text-align: center;
+      animation: slideDown 0.5s ease-out;
+    }
+    
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .result-display.correct {
+      background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+      border-color: #4CAF50;
+    }
+    
+    .result-display.close {
+      background: linear-gradient(135deg, #FFF9C4, #FFF59D);
+      border-color: #FFC107;
+    }
+    
+    .result-display.far {
+      background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+      border-color: #F44336;
+    }
+    
+    .result-text {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    
+    .result-price {
+      font-size: 42px;
+      font-weight: 800;
+      color: #FF6347;
+    }
+    
+    .result-difference {
+      font-size: 22px;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+    
+    .bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .status-text {
+      font-size: 20px;
+      font-weight: 600;
+      color: #666;
+    }
+    
+    .next-btn {
+      padding: 15px 35px;
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #FF1493, #FF69B4);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255,20,147,0.4);
+      transition: all 0.3s ease;
+    }
+    
+    .next-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255,20,147,0.6);
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    /* Confetti */
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: #f0f;
+      position: absolute;
+      animation: confetti-fall 3s linear forwards;
+    }
+    
+    @keyframes confetti-fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .game-area {
+        grid-template-columns: 1fr;
+      }
+      
+      .game-title {
+        font-size: 36px;
+      }
+      
+      .product-emoji {
+        font-size: 80px;
+      }
+      
+      .product-name {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="coin">💰</div>
+  <div class="coin">💵</div>
+  <div class="coin">💴</div>
+  <div class="coin">💶</div>
+  <div class="coin">💷</div>
+  <div class="coin">💸</div>
+  
+  <div class="game-title">💰 ¿Cuánto Cuesta?</div>
+  
+  <div class="app">
+    <div class="stats-row">
+      <div class="pill score">
+        <span>⭐</span>
+        <span>Puntos: <span id="score">0</span></span>
+      </div>
+      <div class="pill round">
+        <span>🎯</span>
+        <span>Ronda: <span id="round">1</span>/10</span>
+      </div>
+    </div>
+    
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+    
+    <div class="game-area">
+      <div class="product-section">
+        <div class="product-display">
+          <div class="product-emoji" id="productEmoji">🍕</div>
+          <div class="product-name" id="productName">Pizza Grande</div>
+        </div>
+      </div>
+      
+      <div class="guess-section">
+        <div class="guess-label">¿Cuánto cuesta en pesos argentinos?</div>
+        <input type="number" class="price-input" id="priceInput" placeholder="$0" min="0" step="100">
+        <button class="guess-btn" id="guessBtn">¡Adivinar!</button>
+        
+        <div class="result-display hidden" id="resultDisplay">
+          <div class="result-text" id="resultText">¡Muy cerca!</div>
+          <div class="result-price">Precio real: $<span id="realPrice">5000</span></div>
+          <div class="result-difference" id="resultDiff">Diferencia: $500</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="bottom-row">
+      <div class="status-text" id="statusText">💡 Ingresa tu mejor estimación</div>
+      <button class="next-btn hidden" id="nextBtn">Siguiente Ronda ▶</button>
+    </div>
+  </div>
+
+  <script>
+    const PRODUCTS = [
+      { name: 'Pizza Grande', emoji: '🍕', price: 8000 },
+      { name: 'Hamburguesa Completa', emoji: '🍔', price: 5500 },
+      { name: 'Docena de Empanadas', emoji: '🥟', price: 6000 },
+      { name: 'Helado 1kg', emoji: '🍦', price: 4500 },
+      { name: 'Coca-Cola 2.25L', emoji: '🥤', price: 1800 },
+      { name: 'Leche 1L', emoji: '🥛', price: 900 },
+      { name: 'Pan Francés', emoji: '🥖', price: 1200 },
+      { name: 'Docena de Huevos', emoji: '🥚', price: 2500 },
+      { name: 'Café en Bar', emoji: '☕', price: 1500 },
+      { name: 'Entrada de Cine', emoji: '🎬', price: 4000 },
+      { name: 'Zapatillas Deportivas', emoji: '👟', price: 85000 },
+      { name: 'Jeans', emoji: '👖', price: 45000 },
+      { name: 'Remera', emoji: '👕', price: 15000 },
+      { name: 'Auriculares Bluetooth', emoji: '🎧', price: 35000 },
+      { name: 'Teclado Gamer', emoji: '⌨️', price: 55000 },
+      { name: 'Mouse Inalámbrico', emoji: '🖱️', price: 18000 },
+      { name: 'Pelota de Fútbol', emoji: '⚽', price: 25000 },
+      { name: 'Bicicleta', emoji: '🚲', price: 350000 },
+      { name: 'Patineta', emoji: '🛹', price: 45000 },
+      { name: 'Libro', emoji: '📚', price: 12000 },
+      { name: 'Cuaderno', emoji: '📓', price: 3500 },
+      { name: 'Mochila Escolar', emoji: '🎒', price: 35000 },
+      { name: 'Celular Gama Media', emoji: '📱', price: 450000 },
+      { name: 'Tablet', emoji: '📱', price: 280000 },
+      { name: 'Notebook', emoji: '💻', price: 850000 },
+      { name: 'Smart TV 50"', emoji: '📺', price: 650000 },
+      { name: 'Consola PlayStation 5', emoji: '🎮', price: 950000 },
+      { name: 'Milanesa con Papas', emoji: '🍗', price: 7500 },
+      { name: 'Asado para 4 personas', emoji: '🥩', price: 25000 },
+      { name: 'Sushi (20 piezas)', emoji: '🍣', price: 12000 },
+      { name: 'Corte de Pelo', emoji: '💇', price: 8000 },
+      { name: 'Entrada a Parque de Diversiones', emoji: '🎡', price: 15000 },
+      { name: 'Pasaje de Colectivo', emoji: '🚌', price: 400 },
+      { name: 'Litro de Nafta', emoji: '⛽', price: 1100 },
+      { name: 'Paquete de Galletitas', emoji: '🍪', price: 2200 },
+      { name: 'Chocolate', emoji: '🍫', price: 1800 },
+      { name: 'Alfajor', emoji: '🧁', price: 1200 },
+      { name: 'Botella de Agua 500ml', emoji: '💧', price: 800 },
+      { name: 'Jugo de Naranja 1L', emoji: '🧃', price: 1500 },
+      { name: 'Yogur', emoji: '🥛', price: 1300 },
+      { name: 'Queso Cremoso 1kg', emoji: '🧀', price: 8500 },
+      { name: 'Jamón Cocido 1kg', emoji: '🥓', price: 9500 },
+      { name: 'Pollo Entero', emoji: '🍗', price: 5500 },
+      { name: 'Carne Picada 1kg', emoji: '🥩', price: 7000 },
+      { name: 'Fideos 500g', emoji: '🍝', price: 1400 },
+      { name: 'Arroz 1kg', emoji: '🍚', price: 1600 },
+      { name: 'Aceite 900ml', emoji: '🫒', price: 3200 },
+      { name: 'Shampoo', emoji: '🧴', price: 4500 },
+      { name: 'Pasta de Dientes', emoji: '🪥', price: 2800 },
+      { name: 'Jabón en Barra', emoji: '🧼', price: 1200 },
+      { name: 'Medialunas (6 unidades)', emoji: '🥐', price: 3500 },
+      { name: 'Facturas (docena)', emoji: '🥐', price: 5000 },
+      { name: 'Cerveza Pinta', emoji: '🍺', price: 2500 },
+      { name: 'Vino Tinto Botella', emoji: '🍷', price: 4500 },
+      { name: 'Fernet 750ml', emoji: '🥃', price: 8000 },
+      { name: 'Papas Fritas Bolsa', emoji: '🥔', price: 2000 },
+      { name: 'Dulce de Leche 400g', emoji: '🍯', price: 2500 },
+      { name: 'Mate', emoji: '🧉', price: 15000 },
+      { name: 'Yerba Mate 1kg', emoji: '🌿', price: 3500 },
+      { name: 'Azúcar 1kg', emoji: '🍬', price: 1500 },
+      { name: 'Sal 1kg', emoji: '🧂', price: 800 },
+      { name: 'Harina 1kg', emoji: '🌾', price: 1200 },
+      { name: 'Manteca', emoji: '🧈', price: 2200 },
+      { name: 'Mermelada', emoji: '🍓', price: 2800 },
+      { name: 'Miel 500g', emoji: '🍯', price: 4500 },
+      { name: 'Atún Lata', emoji: '🐟', price: 1800 },
+      { name: 'Tomate Lata', emoji: '🍅', price: 1200 },
+      { name: 'Mayonesa', emoji: '🥫', price: 2500 },
+      { name: 'Ketchup', emoji: '🍅', price: 2200 },
+      { name: 'Mostaza', emoji: '🌭', price: 1800 },
+      { name: 'Salsa de Soja', emoji: '🥢', price: 2000 },
+      { name: 'Banana 1kg', emoji: '🍌', price: 1500 },
+      { name: 'Manzana 1kg', emoji: '🍎', price: 2000 },
+      { name: 'Naranja 1kg', emoji: '🍊', price: 1800 },
+      { name: 'Tomate 1kg', emoji: '🍅', price: 2200 },
+      { name: 'Lechuga', emoji: '🥬', price: 1500 },
+      { name: 'Zanahoria 1kg', emoji: '🥕', price: 1200 },
+      { name: 'Papa 1kg', emoji: '🥔', price: 1000 },
+      { name: 'Cebolla 1kg', emoji: '🧅', price: 1100 },
+      { name: 'Ajo 1kg', emoji: '🧄', price: 3500 },
+      { name: 'Palta', emoji: '🥑', price: 2500 },
+      { name: 'Sandía', emoji: '🍉', price: 3500 },
+      { name: 'Melón', emoji: '🍈', price: 3000 },
+      { name: 'Frutillas 500g', emoji: '🍓', price: 3500 },
+      { name: 'Uvas 1kg', emoji: '🍇', price: 4000 },
+      { name: 'Pera 1kg', emoji: '🍐', price: 2500 },
+      { name: 'Durazno 1kg', emoji: '🍑', price: 3000 },
+      { name: 'Limón 1kg', emoji: '🍋', price: 1800 },
+      { name: 'Pomelo 1kg', emoji: '🍊', price: 2000 },
+      { name: 'Champú Anticaspa', emoji: '🧴', price: 6500 },
+      { name: 'Acondicionador', emoji: '🧴', price: 5500 },
+      { name: 'Desodorante', emoji: '💨', price: 3500 },
+      { name: 'Perfume', emoji: '💐', price: 45000 },
+      { name: 'Crema Facial', emoji: '🧴', price: 8000 },
+      { name: 'Protector Solar', emoji: '☀️', price: 12000 },
+      { name: 'Papel Higiénico (4 rollos)', emoji: '🧻', price: 3500 },
+      { name: 'Toallas Femeninas', emoji: '🩹', price: 4000 },
+      { name: 'Pañales (paquete)', emoji: '👶', price: 18000 },
+      { name: 'Detergente Ropa', emoji: '🧺', price: 5500 },
+      { name: 'Suavizante', emoji: '🧴', price: 4500 },
+      { name: 'Lavandina', emoji: '🧴', price: 2500 },
+      { name: 'Limpiador Multiuso', emoji: '🧽', price: 3000 },
+      { name: 'Esponja Cocina', emoji: '🧽', price: 1500 },
+      { name: 'Bolsas de Basura', emoji: '🗑️', price: 2800 },
+      { name: 'Fósforos', emoji: '🔥', price: 500 },
+      { name: 'Velas (paquete)', emoji: '🕯️', price: 2000 },
+      { name: 'Pilas AA (4 unidades)', emoji: '🔋', price: 3500 },
+      { name: 'Bombilla LED', emoji: '💡', price: 2500 },
+      { name: 'Cable USB', emoji: '🔌', price: 4000 },
+      { name: 'Cargador de Celular', emoji: '🔌', price: 8000 },
+      { name: 'Funda de Celular', emoji: '📱', price: 5000 },
+      { name: 'Vidrio Templado', emoji: '📱', price: 3500 },
+      { name: 'Memoria USB 32GB', emoji: '💾', price: 12000 },
+      { name: 'Disco Duro Externo 1TB', emoji: '💿', price: 85000 },
+      { name: 'Webcam', emoji: '📷', price: 45000 },
+      { name: 'Micrófono USB', emoji: '🎤', price: 35000 },
+      { name: 'Parlante Bluetooth', emoji: '🔊', price: 28000 },
+      { name: 'Smartwatch', emoji: '⌚', price: 120000 },
+      { name: 'Cámara Web', emoji: '📸', price: 55000 },
+      { name: 'Impresora', emoji: '🖨️', price: 180000 },
+      { name: 'Router WiFi', emoji: '📡', price: 45000 },
+      { name: 'Ventilador', emoji: '🌀', price: 65000 },
+      { name: 'Aire Acondicionado', emoji: '❄️', price: 550000 },
+      { name: 'Microondas', emoji: '📻', price: 120000 },
+      { name: 'Licuadora', emoji: '🥤', price: 45000 },
+      { name: 'Tostadora', emoji: '🍞', price: 35000 },
+      { name: 'Cafetera', emoji: '☕', price: 55000 },
+      { name: 'Plancha', emoji: '👔', price: 28000 },
+      { name: 'Aspiradora', emoji: '🧹', price: 95000 },
+      { name: 'Colchón 2 Plazas', emoji: '🛏️', price: 280000 },
+      { name: 'Almohada', emoji: '🛏️', price: 18000 },
+      { name: 'Sábanas Juego', emoji: '🛏️', price: 25000 },
+      { name: 'Toalla', emoji: '🧖', price: 8000 },
+      { name: 'Cortina de Baño', emoji: '🚿', price: 12000 },
+      { name: 'Espejo', emoji: '🪞', price: 15000 },
+      { name: 'Reloj de Pared', emoji: '🕐', price: 12000 },
+      { name: 'Cuadro Decorativo', emoji: '🖼️', price: 18000 },
+      { name: 'Maceta con Planta', emoji: '🪴', price: 8000 },
+      { name: 'Lámpara de Mesa', emoji: '💡', price: 22000 },
+      { name: 'Silla de Escritorio', emoji: '🪑', price: 85000 },
+      { name: 'Mesa Ratona', emoji: '🪑', price: 120000 },
+      { name: 'Estante', emoji: '📚', price: 65000 },
+      { name: 'Paraguas', emoji: '☂️', price: 8000 },
+      { name: 'Gorra', emoji: '🧢', price: 12000 },
+      { name: 'Bufanda', emoji: '🧣', price: 15000 },
+      { name: 'Guantes', emoji: '🧤', price: 10000 },
+      { name: 'Medias (3 pares)', emoji: '🧦', price: 6000 },
+      { name: 'Cinturón', emoji: '👔', price: 18000 },
+      { name: 'Cartera', emoji: '👜', price: 45000 },
+      { name: 'Billetera', emoji: '💳', price: 15000 },
+      { name: 'Anteojos de Sol', emoji: '🕶️', price: 25000 },
+      { name: 'Reloj de Pulsera', emoji: '⌚', price: 55000 },
+      { name: 'Anillo', emoji: '💍', price: 35000 },
+      { name: 'Collar', emoji: '📿', price: 28000 },
+      { name: 'Aros', emoji: '💎', price: 22000 }
+    ];
+
+    let score = 0;
+    let round = 1;
+    let currentProduct = null;
+    let usedProducts = [];
+
+    const scoreEl = document.getElementById('score');
+    const roundEl = document.getElementById('round');
+    const progressEl = document.getElementById('progress');
+    const productEmojiEl = document.getElementById('productEmoji');
+    const productNameEl = document.getElementById('productName');
+    const priceInputEl = document.getElementById('priceInput');
+    const guessBtnEl = document.getElementById('guessBtn');
+    const resultDisplayEl = document.getElementById('resultDisplay');
+    const resultTextEl = document.getElementById('resultText');
+    const realPriceEl = document.getElementById('realPrice');
+    const resultDiffEl = document.getElementById('resultDiff');
+    const statusTextEl = document.getElementById('statusText');
+    const nextBtnEl = document.getElementById('nextBtn');
+
+    function getRandomProduct() {
+      const available = PRODUCTS.filter(p => !usedProducts.includes(p));
+      if (available.length === 0) {
+        usedProducts = [];
+        return PRODUCTS[Math.floor(Math.random() * PRODUCTS.length)];
+      }
+      const product = available[Math.floor(Math.random() * available.length)];
+      usedProducts.push(product);
+      return product;
+    }
+
+    function startRound() {
+      currentProduct = getRandomProduct();
+      productEmojiEl.textContent = currentProduct.emoji;
+      productNameEl.textContent = currentProduct.name;
+      priceInputEl.value = '';
+      priceInputEl.disabled = false;
+      guessBtnEl.disabled = false;
+      resultDisplayEl.classList.add('hidden');
+      nextBtnEl.classList.add('hidden');
+      statusTextEl.textContent = '💡 Ingresa tu mejor estimación';
+      priceInputEl.focus();
+    }
+
+    function checkGuess() {
+      const guess = parseInt(priceInputEl.value);
+      if (!guess || guess <= 0) {
+        alert('Por favor ingresa un precio válido');
+        return;
+      }
+
+      const realPrice = currentProduct.price;
+      const difference = Math.abs(guess - realPrice);
+      const percentDiff = (difference / realPrice) * 100;
+
+      let points = 0;
+      let resultClass = '';
+      let resultMessage = '';
+
+      if (percentDiff <= 5) {
+        points = 10;
+        resultClass = 'correct';
+        resultMessage = '🎉 ¡PERFECTO! ¡Casi exacto!';
+        createConfetti();
+      } else if (percentDiff <= 15) {
+        points = 7;
+        resultClass = 'correct';
+        resultMessage = '✅ ¡Muy bien! ¡Muy cerca!';
+        createConfetti();
+      } else if (percentDiff <= 30) {
+        points = 4;
+        resultClass = 'close';
+        resultMessage = '👍 ¡Bien! Bastante cerca';
+      } else if (percentDiff <= 50) {
+        points = 2;
+        resultClass = 'close';
+        resultMessage = '🤔 No tan mal, pero lejos';
+      } else {
+        points = 0;
+        resultClass = 'far';
+        resultMessage = '❌ ¡Uy! Muy lejos del precio';
+      }
+
+      score += points;
+      scoreEl.textContent = score;
+
+      resultDisplayEl.className = 'result-display ' + resultClass;
+      resultTextEl.textContent = resultMessage + ` (+${points} pts)`;
+      realPriceEl.textContent = realPrice.toLocaleString('es-AR');
+      
+      const diffText = guess > realPrice 
+        ? `Te pasaste por $${difference.toLocaleString('es-AR')}` 
+        : `Te faltó $${difference.toLocaleString('es-AR')}`;
+      resultDiffEl.textContent = diffText;
+
+      resultDisplayEl.classList.remove('hidden');
+      priceInputEl.disabled = true;
+      guessBtnEl.disabled = true;
+      nextBtnEl.classList.remove('hidden');
+      statusTextEl.textContent = '👉 Continúa a la siguiente ronda';
+    }
+
+    function nextRound() {
+      round++;
+      if (round > 10) {
+        endGame();
+        return;
+      }
+      roundEl.textContent = round;
+      progressEl.style.width = ((round - 1) / 10 * 100) + '%';
+      startRound();
+    }
+
+    function endGame() {
+      const avgScore = (score / 10).toFixed(1);
+      let message = '';
+      if (score >= 80) {
+        message = '🏆 ¡EXPERTO EN PRECIOS! ¡Increíble!';
+      } else if (score >= 60) {
+        message = '🌟 ¡Muy bien! Conoces los precios';
+      } else if (score >= 40) {
+        message = '👍 ¡Bien! Puedes mejorar';
+      } else {
+        message = '💪 ¡Sigue practicando!';
+      }
+      
+      alert(`${message}\n\nPuntaje final: ${score}/100\nPromedio: ${avgScore} pts por ronda`);
+      
+      if (confirm('¿Quieres jugar otra vez?')) {
+        score = 0;
+        round = 1;
+        usedProducts = [];
+        scoreEl.textContent = score;
+        roundEl.textContent = round;
+        progressEl.style.width = '0%';
+        startRound();
+      }
+    }
+
+    function createConfetti() {
+      const colors = ['#FFD700', '#FFA500', '#FF6347', '#FF1493', '#00FF00', '#00CED1'];
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 3000);
+      }
+    }
+
+    guessBtnEl.addEventListener('click', checkGuess);
+    nextBtnEl.addEventListener('click', nextRound);
+    priceInputEl.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') checkGuess();
+    });
+
+    // Start game
+    startRound();
+  </script>
+</body>
+</html>
