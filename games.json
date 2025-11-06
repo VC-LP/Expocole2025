@@ -127,11 +127,12 @@
   },
   {
     "grupo": 15,
-    "integrantes": ["Equipo 15"],
-    "juego": "pokemon",
-    "titulo": "👾 En desarrollo",
-    "img": "poke.png",
-    "enabled": false
+    "integrantes": ["Equipo Prog"],
+    "juego": "palabras",
+    "titulo": "Adivina la palabra",
+    "img": "palabras_00.jpg",
+    "link": "palabras_00/palabras.html",
+    "enabled": true
   },
   {
     "grupo": 16,
