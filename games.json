@@ -57,7 +57,7 @@
     "grupo": 12,
     "integrantes": ["Martín Baigorrí", "Abigail Cuestas"],
     "juego": "pelicula",
-    "titulo": "🎬 Adivina la Película",
+    "titulo": "Adivina el auto",
     "img": "pelis.png",
     "link": "poster_quiz.html",
     "enabled": false
@@ -109,11 +109,12 @@
   },
   {
     "grupo": 13,
-    "integrantes": ["Equipo 13"],
+    "integrantes": ["Equipo Prog"],
     "juego": "banderas",
-    "titulo": "🚩 Juego Próximo",
-    "img": "banderas.png",
-    "enabled": false
+    "titulo": "Adivina la Película",
+    "img": "pelis_00.jpg",
+     "link": "pelis_00/pelis.html",
+    "enabled": true
   },
   {
     "grupo": 14,
