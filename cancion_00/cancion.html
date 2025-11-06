@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adivina la canción</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Musical notes background animation */
+  .music-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .note {
+    position: absolute;
+    font-size: 24px;
+    opacity: 0.15;
+    animation: float 8s infinite ease-in-out;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(10deg); }
+  }
+
+  .game-title {
+    font-size: 56px;
+    font-weight: 800;
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+    text-shadow: 
+      3px 3px 0 #ff006e,
+      6px 6px 0 #8338ec,
+      9px 9px 20px rgba(0,0,0,0.3);
+    animation: titleBounce 2s ease-in-out infinite;
+    z-index: 10;
+    position: relative;
+  }
+
+  @keyframes titleBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  .app-inner {
+    width: min(1400px, 95vw);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    padding: 25px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    position: relative;
+  }
+
+  .stats-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+  }
+
+  .pill {
+    padding: 12px 20px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 18px;
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  .pill:nth-child(1) {
+    background: linear-gradient(135deg, #ff006e, #ff4d94);
+  }
+
+  .pill:nth-child(2) {
+    background: linear-gradient(135deg, #ffbe0b, #fb5607);
+  }
+
+  .pill:nth-child(3) {
+    background: linear-gradient(135deg, #8338ec, #3a86ff);
+  }
+
+  .game-container {
+    display: grid;
+    /* Adjusted column ratio to prevent overflow */
+    grid-template-columns: 40% 60%;
+    gap: 30px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .audio-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .cover {
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1;
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: 0 15px 40px rgba(131, 56, 236, 0.4);
+    border: 5px solid white;
+    animation: coverPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes coverPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 15px 40px rgba(131, 56, 236, 0.4); }
+    50% { transform: scale(1.02); box-shadow: 0 20px 50px rgba(255, 0, 110, 0.5); }
+  }
+
+  audio {
+    width: 100%;
+    max-width: 400px;
+    height: 50px;
+    border-radius: 25px;
+    outline: none;
+  }
+
+  audio::-webkit-media-controls-panel {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 25px;
+  }
+
+  .ans {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    /* Added max-width to prevent buttons from overflowing */
+    max-width: 95%;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 20px 25px;
+    border: none;
+    border-radius: 20px;
+    /* All buttons now have the same purple gradient color */
+    background: linear-gradient(135deg, #8338ec, #667eea);
+    color: white;
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    /* Updated shadow to match new purple color */
+    box-shadow: 0 8px 20px rgba(131, 56, 236, 0.4);
+    text-align: left;
+  }
+
+  .btn:hover:not(:disabled) {
+    transform: translateY(-3px);
+    /* Updated hover shadow */
+    box-shadow: 0 12px 30px rgba(131, 56, 236, 0.6);
+  }
+
+  .btn.correct {
+    /* Changed to bright green gradient for correct answers */
+    background: linear-gradient(135deg, #00d084, #00f5a0) !important;
+    box-shadow: 0 8px 20px rgba(0, 208, 132, 0.6) !important;
+    animation: correctPulse 0.6s ease;
+  }
+
+  .btn.wrong {
+    /* Changed to bright red gradient for incorrect answers */
+    background: linear-gradient(135deg, #ff3838, #ff6b6b) !important;
+    box-shadow: 0 8px 20px rgba(255, 56, 56, 0.6) !important;
+    animation: wrongShake 0.5s ease;
+  }
+
+  @keyframes correctPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+
+  @keyframes wrongShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+  }
+
+  .btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .status {
+    font-size: 18px;
+    font-weight: 600;
+    color: #667eea;
+  }
+
+  .next {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #ff006e, #8338ec);
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(255, 0, 110, 0.4);
+  }
+
+  .next:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(255, 0, 110, 0.6);
+  }
+
+  .next:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Confetti */
+  .confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background: #ff006e;
+    position: absolute;
+    animation: confettiFall 3s linear forwards;
+    z-index: 1000;
+  }
+
+  @keyframes confettiFall {
+    to {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .game-container {
+      grid-template-columns: 1fr;
+    }
+    
+    .game-title {
+      font-size: 36px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="music-bg" id="musicBg"></div>
+
+<div class="game-title">🎵 ¡Adivina la canción!</div>
+
+<div class="app-inner">
+  <div class="stats-row">
+    <div class="pill">⭐ Puntos: <span id="score">0</span></div>
+    <div class="pill">🔥 Valor: <span id="value">5</span>pts</div>
+    <div class="pill">📊 Ronda: <span id="round">1</span>/<span id="total">10</span></div>
+  </div>
+
+  <div class="game-container">
+    <div class="audio-section">
+      <img id="cover" class="cover" src="https://via.placeholder.com/400/667eea/ffffff?text=🎵" alt="cover">
+      <audio id="player" controls preload="none"></audio>
+    </div>
+
+    <div id="answers" class="ans"></div>
+  </div>
+
+  <div class="bottom-row">
+    <span class="status" id="status">🎧 Listo para jugar</span>
+    <button id="next" class="next" disabled>Siguiente Ronda ⏭</button>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+const TERMS = [
+  'coldplay','taylor swift','shakira','queen','bruno mars','dua lipa',
+  'beatles','adele','ed sheeran','michael jackson','madonna','rihanna',
+  'maroon 5','bts','avicii','the weeknd','imagine dragons','billie eilish',
+  'ariana grande','justin bieber','katy perry','lady gaga',
+  // Argentine artists
+  'soda stereo','charly garcia','fito paez','los fabulosos cadillacs',
+  'andres calamaro','gustavo cerati','divididos','los autenticos decadentes',
+  'miranda','tan bionica','los enanitos verdes','rata blanca','bersuit vergarabat',
+  'attaque 77','la renga','babasónicos','tini stoessel','maria becerra',
+  'nicki nicole','duki','bizarrap','paulo londra','lali esposito',
+  // Latin/Spanish artists
+  'luis miguel','mana','juanes','carlos vives','alejandro sanz',
+  'enrique iglesias','marc anthony','ricky martin','thalia','paulina rubio',
+  'selena','celia cruz','vicente fernandez','juan gabriel','ricardo arjona',
+  'alejandra guzman','gloria trevi','reik','sin bandera','camila',
+  'jesse & joy','la oreja de vandogh','jarabe de palo','hombres g','mecano',
+  'amaral','morat','sebastian yatra','natalia lafourcade','mon laferte',
+  // Reggaeton/Urban artists
+  'bad bunny','j balvin','maluma','ozuna','daddy yankee','nicky jam',
+  'karol g','anuel aa','rauw alejandro','myke towers','becky g','farruko',
+  'don omar','wisin','yandel','manuel turizo','manuel turizo','calle 13',
+  'residente','bomba estéreo','aterciopelados',
+  // Spanish artists
+  'rosalia','c tangana','aitana','lola indigo',
+  // International rock/alternative
+  'nirvana','radiohead','oasis','u2','metallica','ac/dc','guns n roses',
+  'red hot chili peppers','foo fighters','green day','linkin park','bon jovi',
+  'aerosmith','rolling stones','pink floyd','led zeppelin','david bowie',
+  // International pop
+  'prince','whitney houston','beyonce','celine dion','mariah carey',
+  'britney spears','christina aguilera','backstreet boys','nsync','one direction',
+  'shawn mendes','harry styles','olivia rodrigo','doja cat','miley cyrus',
+  // Hip-hop/rap artists
+  'drake','post malone','travis scott','kendrick lamar','eminem','50 cent',
+  'snoop dogg','kanye west','lil nas x','cardi b','megan thee stallion',
+  // EDM/Electronic artists
+  'the chainsmokers','calvin harris','david guetta','marshmello','tiesto',
+  'martin garrix','kygo','zedd','alan walker','swedish house mafia'
+];
+
+let state = {score:0, round:1, total:10, current:null, locked:false, value:5};
+
+function createMusicBackground() {
+  const bg = $('#musicBg');
+  const notes = ['♪', '♫', '♬', '🎵', '🎶'];
+  for (let i = 0; i < 20; i++) {
+    const note = document.createElement('div');
+    note.className = 'note';
+    note.textContent = notes[Math.floor(Math.random() * notes.length)];
+    note.style.left = Math.random() * 100 + '%';
+    note.style.top = Math.random() * 100 + '%';
+    note.style.animationDelay = Math.random() * 8 + 's';
+    note.style.fontSize = (Math.random() * 20 + 20) + 'px';
+    bg.appendChild(note);
+  }
+}
+
+function createConfetti() {
+  const colors = ['#ff006e', '#8338ec', '#3a86ff', '#ffbe0b', '#fb5607'];
+  for (let i = 0; i < 50; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random() * 100 + '%';
+    confetti.style.top = '-10px';
+    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.animationDelay = Math.random() * 0.3 + 's';
+    document.body.appendChild(confetti);
+    setTimeout(() => confetti.remove(), 3000);
+  }
+}
+
+function pick(arr, n=1){
+  const a=[...arr]; const out=[];
+  while(out.length<n && a.length){ out.push(a.splice(Math.floor(Math.random()*a.length),1)[0]); }
+  return out;
+}
+
+async function fetchSongs(){
+  const term = TERMS[Math.floor(Math.random()*TERMS.length)];
+  const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=song&limit=50`;
+  $('#status').textContent = '🔍 Buscando canciones...';
+  const res = await fetch(url);
+  const data = await res.json();
+  $('#status').textContent = '🎧 Listo para jugar';
+  return data.results.filter(x => x.previewUrl && x.trackName);
+}
+
+function renderOptions(correctTitle, candidates){
+  const opts = [...candidates.map(x=>x.trackName)];
+  if(!opts.includes(correctTitle)) opts.splice(Math.floor(Math.random()*opts.length), 0, correctTitle);
+  const shuffled = [...new Set(opts)].slice(0,4).sort(()=>Math.random()-0.5);
+  const box = $('#answers'); box.innerHTML = '';
+  shuffled.forEach(t=>{
+    const btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.textContent = t;
+    btn.onclick = ()=> choose(t);
+    box.appendChild(btn);
+  });
+}
+
+function lock(selectedTitle){
+  state.locked = true;
+  const correct = state.current.correct;
+  $$('#answers .btn').forEach(b=>{
+    if(b.textContent === correct) b.classList.add('correct');
+    if(selectedTitle && b.textContent === selectedTitle && selectedTitle !== correct) b.classList.add('wrong');
+    b.disabled = true;
+  });
+  $('#next').disabled = false;
+}
+
+function choose(title){
+  if(state.locked) return;
+  if(title === state.current.correct){ 
+    state.score += state.value;
+    $('#score').textContent = state.score;
+    $('#status').textContent = '🎉 ¡Correcto!';
+    createConfetti(); // Add confetti on correct answer
+  } else {
+    $('#status').textContent = '❌ Incorrecto';
+  }
+  lock(title);
+}
+
+async function nextRound(){
+  $('#next').disabled = true;
+  state.locked = false;
+  if(state.round > state.total){
+    $('#status').textContent = `🏆 Finalizado: ${state.score} puntos`;
+    return;
+  }
+  const results = await fetchSongs();
+  if(results.length < 4){ return nextRound(); }
+
+  const [correct, ...rest] = pick(results, 4);
+  const distractors = rest;
+  state.current = { correct: correct.trackName };
+
+  const player = $('#player');
+  player.src = correct.previewUrl;
+  player.play().catch(()=>{});
+
+  $('#cover').src = correct.artworkUrl100 || 'https://via.placeholder.com/400/667eea/ffffff?text=🎵';
+
+  renderOptions(correct.trackName, distractors);
+
+  $('#round').textContent = state.round;
+  $('#total').textContent = state.total;
+  $('#value').textContent = state.value;
+  $('#status').textContent = '🎧 Escucha y adivina';
+}
+
+$('#next').addEventListener('click', ()=>{
+  state.round++;
+  if(state.round <= state.total){ 
+    nextRound(); 
+  } else {
+    $('#status').textContent = `🏆 Finalizado: ${state.score} puntos`;
+    $('#answers').innerHTML = '';
+    $('#player').src = '';
+    $('#next').disabled = true;
+  }
+});
+
+createMusicBackground();
+nextRound();
+</script>
+</body>
+</html>
