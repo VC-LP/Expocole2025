@@ -130,7 +130,7 @@
     "integrantes": ["Equipo Prog"],
     "juego": "palabras",
     "titulo": "Adivina la palabra",
-    "img": "palabras_00.jpg",
+    "img": "portada-palabras.jpg",
     "link": "palabras_00/palabras.html",
     "enabled": true
   },
