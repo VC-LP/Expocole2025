@@ -136,19 +136,21 @@
   },
   {
     "grupo": 16,
-    "integrantes": ["Equipo 16"],
-    "juego": "pelicula",
-    "titulo": "🎬 En desarrollo",
-    "img": "pelis.png",
-    "enabled": false
+    "integrantes": ["Equipo Prog"],
+    "juego": "emojis",
+    "titulo": "Adivina con emojis",
+    "img": "portada-emojis.jpg",
+    "link": "emojis_00/emojis.html",
+    "enabled": true
   },
   {
     "grupo": 17,
-    "integrantes": ["Equipo 17"],
-    "juego": "adivina_cancion",
-    "titulo": "🎵 En desarrollo",
-    "img": "cancion.png",
-    "enabled": false
+    "integrantes": ["Equipo Prog"],
+    "juego": "cuanto cuesta",
+    "titulo": "¿Cuánto cuesta?",
+    "img": "portada-precios.jpg",
+    "link": "cuesta_00/cuanto_cuesta.html",
+    "enabled": true
   },
   {
     "grupo": 18,
