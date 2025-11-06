@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Quién es este Pokémon?</title>
+<link rel="stylesheet" href="css/style.css"> </head>
+<body>
+<div class="app">
+  <h1 id="main-title-container">
+    <img id="titulo" src="img/titulo.png" alt="¿Quién es este Pokémon?" />
+  </h1>
+  <div class="row">
+    <div class="pill">Puntos: <b id="score">0</b></div>
+    <div class="pill">Ronda: <b id="round">1</b>/<b id="total">10</b></div>
+  </div>
+
+  <div class="question">Tocá <b>Ayuda</b> para revelar por sectores 
+    </div><div class="question1">o elegí el nombre correcto:</div>
+
+  <div class="stage-and-answers"> 
+    
+    <div class="stage">
+      <div class="imgBox">
+        <img id="pokeBase" class="pokeBase" src="" alt="Pokémon a color">
+        <img id="pokeMask" class="pokeMask" src="" alt="Silueta negra">
+      </div>
+      <button id="hint" class="btnSm" style="margin-top:-35px;">Ayuda</button>
+      <div id="extra" class="extra"></div>
+    </div>
+
+    <div id="answers" class="ans"></div>
+  
+  </div>
+  <div id="controls" class="controls"> 
+    <span id="status" class="muted">Listo</span>
+    <button id="next" class="btnSm" disabled>Siguiente ⏭</button>
+</div>
+
+  <div id="ranking"></div>
+</div>
+
+<script src="Script.js"></script>
+</body>
+</html>

@@ -1,0 +1,277 @@
+:root { 
+  --bg-color: #112b41; 
+  --panel: rgba(255, 255, 255, 0.308); 
+  --border: #dbe3ff; 
+  --text: #1b2742;
+  --muted: #6b789e;
+  --primary-color: #eccc3a; 
+  --border-radius-large: 25px;
+}
+/* Base */
+*{box-sizing:border-box}
+html{height:100%} 
+body{
+
+  min-height: 100vh;
+  margin:0;
+  
+
+  background-image: url('/img/fondo2.png'); 
+  background-size: cover; 
+  background-attachment: fixed; 
+  background-repeat: no-repeat;
+  background-position: center center;
+
+  font-family: 'Arial Black', Impact, sans-serif;
+  color:var(--text);
+  
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content:center;
+  padding: 30px 20px;
+}
+
+.app{
+  max-width: 1000px;
+  width: 96vw;
+  background:var(--panel); 
+  border:3px solid var(--border);
+  border-radius:25px;
+  padding:10px; 
+  margin-top: -20px;
+}
+h1{
+  text-align: center;
+}
+
+#titulo {
+  width: 350px;
+  height: auto;
+  object-fit: contain;
+}
+
+.row{
+  display:flex; margin-top: -180px;
+  align-items:center;justify-content:space-between;flex-wrap:wrap;
+  margin-bottom: 120px;
+
+}
+
+.pill{
+  padding:8px 12px;
+  border-radius:999px;
+  border:2px solid var(--border); 
+  font-weight:900;
+  background:#fff;
+  
+  color: var(--primary-color);
+  text-shadow: 1px 1px 0 var(--bg-color), -1px -1px 0 var(--bg-color), 1px -1px 0 var(--bg-color), -1px 1px 0 var(--bg-color);
+
+  box-shadow: 0 4px 8px rgba(0,0,0,.1);
+}
+
+.question, .question1 {
+  margin-left:50px;
+  font-size:clamp(16px, 2vw, 20px);
+  color: var(--primary-color);
+  text-shadow: 1px 1px 0 var(--bg-color), -1px -1px 0 var(--bg-color), 1px -1px 0 var(--bg-color), -1px 1px 0 var(--bg-color);
+
+  font-size: 25px;
+}
+.question1{
+  margin-left:90px;
+  font-size:clamp(16px, 2vw, 20px);
+  font-size: 25px;
+  color: var(--primary-color);
+}
+
+/* ESTRUCTURA DE DOS COLUMNAS (stage-and-answers) */
+.stage-and-answers {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.stage{
+  /* Columna Derecha (Imagen) */
+  display:flex; 
+  flex-direction: column;
+  place-items:center;
+  margin-top: -1cm;
+  flex: 1; 
+  order: 2; 
+}
+.ans{
+  /* Columna Izquierda (Respuestas) */
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 30px; 
+  margin-top: 30px;
+  margin-left: 70px;
+  text-align: center
+}
+
+.imgBox{position:relative;display:inline-block; margin-bottom: 5px;}
+.pokeBase,.pokeMask{width:min(350px,40vw);max-height:350px;object-fit:contain;display:block; margin-top: -60px;} /* Corregido max-height */
+
+
+.pokeMask{
+    position:absolute;inset:0;filter:brightness(0); 
+    --rev: 0%;
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent var(--rev), #fff calc(var(--rev) + 1%));
+    mask-image: radial-gradient(circle at 50% 50%, transparent var(--rev), #fff calc(var(--rev) + 1%));
+    transition: -webkit-mask-image .35s ease, mask-image .35s ease, opacity .35s ease;
+}
+
+.btn{
+  width:200px ;
+  text-align: center; 
+  padding:10px 10px;
+  border-radius:15px;
+  border:3px solid var(--border); 
+  background:#fff;
+  font-weight:900;
+  cursor:pointer;
+  transition:.15s transform,.15s box-shadow;
+  font-size: clamp(18px, 2.5vw, 25px);
+  color: var(--text);
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(0,0,0,.1)}
+.btn.correct{background:#ecfbf6;border-color:#b8f2de; color: #157351;}
+.btn.wrong{background:#fff0f0;border-color:#ffd6d6; color: #a52a2a;}
+
+.controls{
+  display:flex;gap:20px;justify-content:space-between;align-items:center;
+  margin-top:35px;flex-wrap:wrap;
+  padding: 5px;
+  border: 1px solid var(--border); 
+  border-radius: 12px;
+  background: #ffffff;
+}
+.muted{color:var(--muted); font-weight: 600;}
+.btnSm{
+  padding:12px 16px; 
+  border-radius:12px;
+  border:2px solid var(--border);
+  background: var(--primary-color);
+  color: var(--text-light);
+  font-weight:900;
+  cursor:pointer;
+  box-shadow: 0 3px 0 #8a8587;
+  margin-left: -930px;
+
+}
+.btnSm:hover{
+    transform:translateY(-1px);
+    box-shadow: 0 4px 0 #161616;
+}
+.btnSm:disabled{opacity:.5;cursor:not-allowed; transform:none; box-shadow: none;}
+.extra{margin-top:-20px;text-align:center;color:var(--muted); font-size: 16px; margin-left: 50px; }
+.types{display:inline-flex;gap:8px;margin-left:8px}
+.chip{padding:4px 10px;border-radius:999px;border:1px solid var(--border);font-weight:800;font-size:14px; color: var(--text);}
+
+
+#ranking{
+  margin-top:20px; padding: 15px; border-radius: 12px; 
+  background: rgba(255, 255, 255, 0.521);
+  border: 1px solid var(--border); 
+}
+#ranking h2{
+  font-size:20px;
+  margin:6px 0; 
+  color: var(--primary-color); 
+  text-shadow: 1px 1px 0 var(--bg-color), -1px -1px 0 var(--bg-color), 1px -1px 0 var(--bg-color), -1px 1px 0 var(--bg-color);
+}
+#ranking table{width:100%;border-collapse:collapse;font-size:16px}
+#ranking th,#ranking td{
+  border:1px solid var(--border); 
+  padding:8px;
+  text-align:left
+}
+
+/* OCULTAR ELEMENTOS */
+
+
+.app.game-over .row {
+display: none !important;
+}
+
+
+.app.game-over .question,
+.app.game-over .question1 {
+display: none !important;
+}
+
+
+.app.game-over .stage-and-answers,
+.app.game-over #hint,
+.app.game-over .extra {
+display: none !important;
+}
+
+
+.app.game-over #next {
+    display: none !important;
+}
+
+.app.game-over .controls {
+
+justify-content: space-between !important; 
+margin-top: 50px; 
+padding: 10px 15px; 
+}
+
+
+.app.game-over #status,
+.app.game-over #final-status { 
+    text-align: left; 
+    flex-grow: 1; 
+    font-size: 1.2em; 
+    font-weight: 900;
+}
+
+
+.app.game-over #ranking {
+display: block !important;
+}
+
+
+/*  RESPONSIVIDAD */
+
+@media (max-width: 800px) {
+    
+   
+    .stage-and-answers {
+        flex-direction: column;
+        align-items: center; 
+    }
+
+    
+    .stage {
+        order: 1; 
+    }
+    .ans {
+        order: 2; 
+        margin-left: 0;
+        grid-template-columns: 1fr; 
+        width: 90%; 
+
+   
+    .pokeBase, .pokeMask {
+        width: min(300px, 80vw); 
+        max-height: 300px;
+        margin-top: 0;
+    }
+
+   
+    .btn {
+        width: 100%;
+    }
+    
+   
+    .question, .question1, .extra {
+        margin-left: 0;
+        text-align: center;
+    }
+    }}
