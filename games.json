@@ -56,11 +56,11 @@
   {
     "grupo": 12,
     "integrantes": ["Martín Baigorrí", "Abigail Cuestas"],
-    "juego": "pelicula",
+    "juego": "auto",
     "titulo": "Adivina el auto",
-    "img": "pelis.png",
-    "link": "poster_quiz.html",
-    "enabled": false
+    "img": "portada_autos.png",
+    "link": "adivina-el-auto/autos.html",
+    "enabled": true
   },
   {
     "grupo": 11,
