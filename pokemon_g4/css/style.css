@@ -16,7 +16,7 @@ body{
   margin:0;
   
 
-  background-image: url('/img/fondo2.png'); 
+  background-image: url('../img/fondo2.png'); 
   background-size: cover; 
   background-attachment: fixed; 
   background-repeat: no-repeat;
@@ -274,4 +274,5 @@ display: block !important;
         margin-left: 0;
         text-align: center;
     }
+
     }}
