@@ -103,9 +103,9 @@
     "integrantes": ["Montangie Alvaro", "Fischer Joaquin", "Tiecher Bruno"],
     "juego": "ahorcado",
     "titulo": "🔠 Ahorcado",
-    "img": "ahorcado.png",
-    "link": "ahorcado_es_en.html",
-    "enabled": false
+    "img": "portada_g7.png",
+    "link": "ahorcado_g7/index.html",
+    "enabled": true
   },
   {
     "grupo": 13,
