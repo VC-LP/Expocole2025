@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adivina el Auto</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- PORTADA -->
+<div id="home" class="screen active">
+  <div class="card">
+    <h1>Adivina el Auto</h1>
+    <input type="text" id="playerName" placeholder="Tu nombre" maxlength="15">
+    <button id="startBtn">JUGAR</button>
+    <div id="top5">
+      <h3>Top 5</h3>
+      <ol id="topList"><li class="muted">Sin récords</li></ol>
+    </div>
+  </div>
+</div>
+
+<!-- JUEGO -->
+<div id="game" class="screen">
+  <div class="card">
+    <div class="header">
+      <button id="backHome">Volver</button>
+      <div>Puntos: <b id="score">0</b></div>
+      <div>Ronda: <b id="round">1</b>/15</div>
+    </div>
+    <h2>¿Qué auto es?</h2>
+    <img id="car" src="" alt="Auto" class="car-img">
+    <div id="answers" class="answers"></div>
+    <div class="footer">
+      <span id="status">Listo</span>
+      <button id="next" disabled>Siguiente</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESUMEN -->
+<div id="summary" class="screen">
+  <div class="card">
+    <h1>¡Terminado!</h1>
+    <p id="finalMsg"></p>
+    <p id="rankMsg"></p>
+    <button id="playAgain">Jugar de nuevo</button>
+    <button id="goHome">Inicio</button>
+  </div>
+</div>
+
+<script>
+  const $ = s => document.querySelector(s);
+  let cars = [];
+  let state = { score: 0, round: 1, player: '', locked: false };
+
+  // === MOSTRAR PANTALLA ===
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    $(`#${id}`).classList.add('active');
+  }
+
+  // === RANKING ===
+  function getRanking() {
+    return JSON.parse(localStorage.getItem('ranking') || '[]');
+  }
+  function saveScore(name, score) {
+    const r = getRanking();
+    r.push({ name, score });
+    r.sort((a,b) => b.score - a.score);
+    localStorage.setItem('ranking', JSON.stringify(r.slice(0,50)));
+  }
+  function updateTop() {
+    const top = getRanking().slice(0,5);
+    $('#topList').innerHTML = top.length ? top.map(p => `<li><b>${p.name}</b>: ${p.score} pts</li>`).join('') : '<li class="muted">Sin récords</li>';
+  }
+
+  // === CARGAR AUTOS ===
+  fetch('cars.json')
+    .then(r => r.json())
+    .then(data => {
+      cars = data.filter(c => c.photo);
+      $('#status').textContent = `Listo (${cars.length} autos)`;
+    })
+    .catch(() => $('#status').textContent = 'Error: cars.json no encontrado');
+
+  // === JUEGO ===
+  function pick(n) {
+    const arr = [...cars];
+    const out = [];
+    for (let i = 0; i < n && arr.length; i++) {
+      const idx = Math.floor(Math.random() * arr.length);
+      out.push(arr.splice(idx, 1)[0]);
+    }
+    return out;
+  }
+
+  function startRound() {
+    if (state.round > 15) return endGame();
+    const [correct, ...others] = pick(4);
+    state.current = correct.name;
+    $('#car').src = correct.photo;
+    const opts = [correct.name, ...others.map(o => o.name)].sort(() => Math.random() - 0.5);
+    $('#answers').innerHTML = opts.map(name => 
+      `<button onclick="choose('${name}')">${name}</button>`
+    ).join('');
+    $('#round').textContent = state.round;
+    $('#status').textContent = '¡Adiviná!';
+  }
+
+  window.choose = function(name) {
+    if (state.locked) return;
+    state.locked = true;
+    if (name === state.current) { state.score++; $('#score').textContent = state.score; }
+    document.querySelectorAll('#answers button').forEach(b => {
+      if (b.textContent === state.current) b.classList.add('correct');
+      if (b.textContent === name && name !== state.current) b.classList.add('wrong');
+      b.disabled = true;
+    });
+    $('#next').disabled = false;
+  };
+
+  // === SIGUIENTE ===
+  $('#next').onclick = () => {
+    state.round++;
+    state.locked = false;
+    $('#next').disabled = true;
+    startRound();
+  };
+
+  // === FINAL ===
+  function endGame() {
+    saveScore(state.player, state.score);
+    const rank = getRanking().findIndex(p => p.name === state.player && p.score === state.score) + 1;
+    $('#finalMsg').innerHTML = `<b>${state.player}</b>, sacaste <b>${state.score}/15</b>`;
+    $('#rankMsg').textContent = rank <= 5 ? `¡Top ${rank}!` : '';
+    show('summary');
+  }
+
+  // === BOTONES ===
+  $('#startBtn').onclick = () => {
+    const name = $('#playerName').value.trim();
+    if (!name) return alert('¡Escribí tu nombre!');
+    state.player = name;
+    state.score = 0;
+    state.round = 1;
+    $('#score').textContent = '0';
+    show('game');
+    startRound();
+  };
+  $('#backHome').onclick = () => show('home');
+  $('#playAgain').onclick = () => { $('#playerName').value = state.player; $('#startBtn').click(); };
+  $('#goHome').onclick = () => show('home');
+
+  // === INICIO ===
+  updateTop();
+</script>
+</body>
+</html>

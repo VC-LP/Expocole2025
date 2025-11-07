@@ -1,0 +1,96 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-family: system-ui, sans-serif; }
+body {  background: linear-gradient(to right, blue, white); color: #1a1a1a; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+
+.screen { display: none; width: 100%; max-width: 500px; }
+.screen.active { display: block; }
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+h1 { font-size: 28px; margin-bottom: 8px; color: #4361ee; }
+h2 { font-size: 20px; margin: 16px 0; }
+p { margin: 12px 0; color: #555; }
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 16px 0;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+button {
+  background: #4361ee;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  margin: 8px 0;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  transition: 0.2s;
+}
+
+button:hover { background: #364fc7; transform: translateY(-1px); }
+button:disabled { background: #94a3b8; cursor: not-allowed; }
+
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.score, .round { font-size: 14px; background: #eef1ff; padding: 6px 12px; border-radius: 20px; }
+
+#backHome { background: none; color: #666; font-size: 20px; width: auto; }
+
+.img-box {
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+#car {
+  width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+#answers {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+#answers button {
+  background: white;
+  border: 2px solid #ddd;
+  color: #333;
+}
+
+#answers button:hover { border-color: #4361ee; }
+
+#answers button.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+#answers button.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+
+.footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+#status { color: #666; font-size: 14px; }
+
+#top5 { margin-top: 24px; text-align: left; }
+#top5 h3 { font-size: 16px; color: #4361ee; margin-bottom: 8px; }
+#top5 ol { font-size: 14px; }
+#top5 li { margin: 4px 0; }
+
+.muted { color: #999; font-style: italic; }
+
+@media (max-width: 500px) {
+  .card { padding: 20px; }
+  h1 { font-size: 24px; }
+}
