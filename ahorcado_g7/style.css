@@ -1,0 +1,213 @@
+:root {
+  --bg: #e8ecff;
+  --panel: #ffffff;
+  --border: #c7d2fe;
+  --text: #1e293b;
+  --muted: #64748b;
+  --accent: #3b82f6;
+  --ok: #10b981;
+  --bad: #ef4444;
+}
+
+/* ===== DARK MODE ===== */
+body.dark {
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --border: #334155;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #60a5fa;
+  --ok: #34d399;
+  --bad: #f87171;
+}
+
+/* ===== General ===== */
+* {
+  box-sizing: border-box;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: "Inter", "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* ===== App container ocupa toda la pantalla ===== */
+.app {
+  width: 100vw;
+  height: 100vh;
+  background: var(--panel);
+  border: none;
+  border-radius: 0;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  box-shadow: none;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Header ===== */
+h1 {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 800;
+  margin: 10px 0 18px 0;
+  color: var(--accent);
+}
+
+/* ===== Theme toggle (botón fijo arriba a la derecha) ===== */
+.theme-toggle {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 9999;
+}
+
+.theme-toggle button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.theme-toggle button:hover {
+  transform: scale(1.1);
+  background: #2563eb;
+}
+
+/* ===== Layout interno ===== */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 900px;
+}
+
+/* ===== Pills ===== */
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.9);
+  font-weight: 600;
+  color: var(--accent);
+}
+body.dark .pill {
+  background: rgba(255,255,255,0.05);
+}
+
+/* ===== Select ===== */
+.select {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+}
+.select:hover {
+  border-color: var(--accent);
+}
+
+/* ===== Word ===== */
+.word {
+  font-size: 44px;
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: 0.25em;
+  margin: 16px 0 4px 0;
+}
+
+.hint {
+  text-align: center;
+  color: var(--muted);
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+/* ===== Hangman ===== */
+.hangman {
+  height: 130px;
+  display: grid;
+  place-items: center;
+  margin: 10px 0;
+}
+.face {
+  font-size: 60px;
+}
+.win { color: var(--ok); }
+.lose { color: var(--bad); }
+
+/* ===== Letters ===== */
+.letters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(38px, 1fr));
+  gap: 6px;
+  margin: 16px 0;
+  width: 100%;
+  max-width: 700px;
+}
+.btnL {
+  padding: 10px 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  font-weight: 700;
+  cursor: pointer;
+}
+.btnL:hover {
+  background: var(--accent);
+  color: white;
+  transform: translateY(-1px);
+}
+.btnL:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ===== Buttons ===== */
+.next {
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+.next:hover {
+  background: #2563eb;
+}
+
+.status {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  h1 { font-size: 22px; }
+  .word { font-size: 32px; }
+}

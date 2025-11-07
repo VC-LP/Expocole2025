@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ahorcado (ES/EN)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+  <div class="theme-toggle">
+    <button id="themeBtn" title="Cambiar tema">🌙</button>
+  </div>
+<div class="app">
+  <h1> Ahorcado (ES/EN)</h1>
+
+  <div class="row">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="pill">Idioma:
+        <select id="lang" class="select">
+          <option value="es">Español (lista local)</option>
+          <option value="en">English (API)</option>
+        </select>
+      </span>
+      <span class="pill">Dificultad EN (longitud):
+        <select id="enLen" class="select">
+          <option value="4">4</option><option value="5" selected>5</option><option value="6">6</option><option value="7">7</option>
+        </select>
+      </span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="pill">Puntos: <b id="score">0</b></span>
+      <span class="pill">Intentos: <b id="tries">6</b></span>
+      <button id="next" class="next">Nueva palabra ⏭</button>
+    </div>
+  </div>
+
+  <div class="hangman"><div id="face" class="face">🙂</div></div>
+  <div id="word" class="word">_ _ _ _</div>
+  <div class="hint" id="hint">Elegí letras con el teclado o tocá los botones.</div>
+
+  <div id="letters" class="letters"></div>
+
+  <div class="row">
+    <span id="status" class="status">Listo</span>
+    <span class="status">Consejo: F11 pantalla completa</span>
+  </div>
+</div>
+
+<script>
+/* ===== Utilidades ===== */
+const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
+const stripAccents = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g,''); // quita tildes (á→a, ñ→n)
+const onlyLetters = s => (s||'').toLowerCase().replace(/[^a-zñáéíóúü]/gi,''); // conserva letras ES
+
+/* ===== Estado ===== */
+let secretRaw='', secretNorm='', display=[], tries=6, score=0, ended=false, lang='es';
+const EN_MIN_TRIES = 6;
+
+/* ===== Banco ES (grande) ===== */
+const PALABRAS_ES = [
+  // animales
+  "perro","gato","jirafa","elefante","caballo","conejo","leon","tigre","zorro","oso","aguila","delfin","ballena","tortuga","lobo","panda",
+  // lugares/escuela
+  "escuela","aula","biblioteca","laboratorio","patio","universidad","colegio","computadora","teclado","pantalla","internet",
+  // ciencias/tecnología
+  "foton","atomo","molecula","celula","planeta","orbita","galaxia","robot","programacion","algoritmo","variable","funcion",
+  // cultura general
+  "musica","historia","geografia","matematica","pintura","teatro","deporte","futbol","baloncesto","natacion","carrera","maraton",
+  // naturaleza
+  "montaña","bosque","rio","playa","desierto","volcan","llanura","isla","cascada","glaciar","selva",
+  // objetos comunes
+  "cuaderno","lapicera","mochila","regla","tijera","pegamento","botella","reloj","ventana","puerta","silla","mesa","cocina",
+  // comidas
+  "manzana","banana","sandwich","empanada","pizza","chocolate","helado","fideos","ensalada","tomate","limon",
+  // países/ciudades
+  "argentina","uruguay","chile","paraguay","brasil","españa","mexico","colombia","peru","bolivia","venezuela","italia","francia","alemania",
+  "cordoba","mendoza","rosario","salta","barcelona","madrid","roma","lima","bogota",
+  // otros
+  "biblioteca","profesor","estudiante","familia","amigo","viaje","carrera","trabajo","fiesta","arte","ciencia","tecnologia","energia",
+  "bahia","puente","ciudad","pueblo","jardin","parque","museo","teclado","raton","pantalla","auricular","teatro","cine"
+];
+
+/* ===== Letras por idioma ===== */
+const ALPHABET_EN = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+const ALPHABET_ES = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split(''); // Ñ visible (mapea a N)
+
+/* ===== UI ===== */
+function faceByTries(t){ return ['💀','😫','😟','😐','🙂','😃','🤩'][t]; } // 0..6
+function draw(){
+  $('#word').textContent = display.join(' ');
+  $('#tries').textContent = String(tries);
+  $('#face').textContent = faceByTries(Math.max(0,Math.min(6,tries)));
+}
+function setStatus(t){ $('#status').textContent=t; }
+
+function buildLetters(){
+  const box=$('#letters'); box.innerHTML='';
+  const letters = (lang==='es'? ALPHABET_ES : ALPHABET_EN);
+  letters.forEach(ch=>{
+    const b=document.createElement('button');
+    b.className='btnL'; b.textContent=ch;
+    b.onclick=()=> guess((ch==='Ñ'?'N':ch).toLowerCase(), b); // Ñ → N para normalización
+    box.appendChild(b);
+  });
+}
+function lockLetters(disabled=true){ $$('#letters .btnL').forEach(b=>b.disabled=disabled); }
+
+/* ===== Juego ===== */
+function revealAll(win){
+  ended=true; lockLetters(true);
+  if(win){ score++; $('#score').textContent=String(score); setStatus(lang==='es'?'¡Correcto!':'Correct!'); }
+  else { setStatus((lang==='es'?'La palabra era: ':'The word was: ')+secretRaw); }
+}
+function guess(letter, btnEl){
+  if(ended) return;
+  if(btnEl) btnEl.disabled=true;
+  // Normalizo letra (tildes fuera, ñ→n)
+  const L = stripAccents(letter).toLowerCase();
+  let hit=false;
+  // Revelo usando la cruda (para mantener tildes/ñ en pantalla) comparando contra normalized
+  secretRaw.split('').forEach((ch,i)=>{
+    if(stripAccents(ch).toLowerCase()===L){ display[i]=ch.toUpperCase(); hit=true; }
+  });
+  if(!hit){ tries--; }
+  draw();
+  if(display.join('').toLowerCase()===secretRaw.toUpperCase().toLowerCase()){ revealAll(true); }
+  else if(tries===0){ revealAll(false); }
+}
+
+/* ===== Palabra nueva ===== */
+async function newWord(){
+  ended=false; lockLetters(false);
+  if(lang==='en'){
+    // EN desde API con longitud corta (4..7 configurable)
+    tries = EN_MIN_TRIES;
+    const len = parseInt($('#enLen').value || '5',10);
+    setStatus('Fetching word…');
+    let w='';
+    try{
+      const r = await fetch(`https://random-word-api.herokuapp.com/word?number=1&length=${len}`);
+      const j = await r.json(); w = (j[0]||'apple').toLowerCase();
+    }catch{ w='apple'; }
+    w = w.replace(/[^a-z]/g,''); // solo letras inglesas
+    if(w.length<3) w='planet';
+    secretRaw = w;
+  }else{
+    // ES desde lista local (más grande)
+    tries = 6;
+    const pick = PALABRAS_ES[Math.floor(Math.random()*PALABRAS_ES.length)];
+    secretRaw = onlyLetters(pick);
+    if(!secretRaw || secretRaw.length<3) secretRaw = "escuela";
+  }
+  secretNorm = stripAccents(secretRaw).toLowerCase();
+  display = secretRaw.split('').map(ch => /[a-záéíóúüñ]/i.test(ch) ? '_' : ch);
+  draw(); setStatus(lang==='es'?'Listo':'Ready');
+}
+
+/* ===== Eventos ===== */
+$('#next').addEventListener('click', newWord);
+$('#lang').addEventListener('change', e=>{
+  lang = e.target.value; buildLetters(); newWord();
+  $('#hint').textContent = lang==='es'
+    ? 'Elegí letras con el teclado o tocá los botones.'
+    : 'Pick letters with your keyboard or tap the buttons.';
+});
+$('#enLen').addEventListener('change', ()=>{ if(lang==='en') newWord(); });
+
+window.addEventListener('keydown', e=>{
+  if(ended) return;
+  let k = e.key.toUpperCase();
+  if(/[A-ZÑ]/.test(k)){
+    // Mapeo Ñ→N para lógica
+    const normalizedKey = (k==='Ñ'?'N':k).toLowerCase();
+    const btn = [...$$('#letters .btnL')].find(b=> (b.textContent==='Ñ' && k==='Ñ') || b.textContent===k );
+    if(btn && !btn.disabled) guess(normalizedKey, btn);
+  }
+});
+
+/* ===== Init ===== */
+function init(){
+  lang='es';
+  $('#lang').value='es';
+  buildLetters();
+  newWord();
+}
+init();
+const themeBtn = document.getElementById('themeBtn');
+themeBtn.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  themeBtn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+});
+</script>
+</body>
+</html>
