@@ -10,7 +10,7 @@ body {
     margin: 0;
     
   
-    background-image: url('/img/fondo2.png'); 
+    background-image: url('../img/fondo2.png'); 
     background-size: cover;
     background-attachment: fixed;
     background-position: center center;
@@ -73,4 +73,5 @@ body {
     margin-top: 20px;
     color: var(--text);
     opacity: 0.8;
+
 }
